@@ -1,0 +1,2139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fast MNO Upgrade — Policy Preparation :: LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</title>
+    <link rel="canonical" href="https://labs.sysdeseng.com/4.20/fast-mno-policy-preparation.html">
+    <link rel="prev" href="check-deployment-is-finished.html">
+    <link rel="next" href="fast-mno-cgu-execution.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/solutions/telecommunications" target="_blank"><img src="../_/img/Logo-Red_Hat-A-Reverse-RGB.png" height="40px" alt="Red Hat Telco Solutions"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://labs.sysdeseng.com">LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="4.20" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="welcome.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html">Welcome</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html#showroom-intro">Introduction to the Showroom Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#resizing-sections">Resizing App Sections</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#multiple-terminals">Opening Multiple Terminals</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#web-browser">Web Browser</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#current-contributors">Current Contributors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#past-contributors">Past Contributors</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="introduction.html">Introduction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-aim">Who Is This Lab Aimed At?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#what-you-will-achieve">What You Will Achieve</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-software-versions">Lab Software Versions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="acronyms.html">Acronyms used in the lab</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="5g-core-context.html">5G Core Context</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#mcp">MachineConfigPools</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#zones">Zones and Topology Spread</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#numa-nodes">NUMA Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#huge-pages">Huge Pages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#cpu-pinning">CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#irq-load-balancing">IRQ Load Balancing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dpdk">DPDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#sriov">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dual-stack-networking">Dual-stack Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#storage">Persistent Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#service-mesh">Service Mesh</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="mno-intro.html">Introduction to Multi-Node OpenShift (MNO)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#telco-core-topology">Telco Core Cluster Topology</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#differences-from-standard-ocp">Differences from a Standard OCP Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#mno-requirements">Minimum Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#installation-methods">Installation Methods</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#extra-information">Extra Information</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="telco-related-infra-operators-intro.html">Introduction to Telco Related Infrastructure Operators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#node-tuning-operator">Node Tuning Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#sriov-operator">SR-IOV Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#ptp-operator">PTP Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#accelerators-operators">Accelerators Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cluster-logging-operator">Cluster Logging Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#lifecycle-operator">Lifecycle Agent Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#storage-operator">Storage Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#oadp-operator">OpenShift API for Data Protection Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cert-manager-operator">Cert-Manager Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-intro.html">Introduction to Zero Touch Provisioning (ZTP)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-intro.html#what-is-ztp">What is ZTP?</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html">OpenShift GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html#gitops">GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-principles">GitOps Principles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-patterns-ocp">GitOps Patterns on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#directories-vs-branches">Directories vs Branches</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#direct-commit-to-main">Direct commit to main</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#prs-review-cycles">Pull Requests and review cycles</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ocp-gitops.html#gitops-ocp">GitOps on OpenShift</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html">Hub Management Components</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#rhacm">Red Hat Advanced Cluster Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#mce">Multicluster Engine</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#ai">Infrastructure Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#gitops-operator">GitOps Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#sitegen">SiteGen</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#policygen">PolicyGen</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-at-scale.html#talm">Topology Aware Lifecycle Manager</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-workflow.html">ZTP Workflow</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#deployment-methods">Multi-Node OpenShift Deployments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#ztp-policies">Deployment Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html">RHACM Governance Policy Framework</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#policy-framework">Policy Framework</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html#policies">Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-status">Policy Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-remediation">Policy Remediation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#rhacm-policies-takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="managing-at-scale.html">Managing at Scale</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#inform-policies">Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#olm-subscriptions">OLM Subscriptions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#cluster-policies">Cluster Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html">Topology Aware Lifecycle Manager (TALM)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#inform-policies">Default Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html#cgu">Cluster Group Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="talm.html#autocreation-cgu">Auto Creation of CGUs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#phase-labels">Phase labels</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#waves">Policy Waves</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html">PolicyGen Deepdive</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policygen-deepdive.html#policygen-implementation">PolicyGen Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#kustomize-plugins">Kustomize Plugins</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#policy-generator">Policy Generator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#telco-core-profile">Telco Core Profile</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#cpu-partitioning">CPU Partitioning and Performance Tuning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#schedulable-cp">Workloads on Schedulable Control Planes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#node-configuration">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#service-mesh">Service Mesh</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#cno">Cluster Network Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#metallb">Load Balancer (MetalLB)</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#sr-iov-core">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#nmstate">NMState Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#logging-core">Log Collector and Forwarder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#numa-scheduling">NUMA-Aware Scheduling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#security-core">Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#disconnected-core">Disconnected Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policygen-deepdive.html#kustomize-plugins-locally">Running Kustomize Plugins Locally</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html">Deployment Considerations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#hardware-configurations">Hardware configurations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#bios-settings">BIOS Settings</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#networking">Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#disconnected-environments">Disconnected Environments</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#connected-proxy">Connected through proxy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#fully-disconnected">Fully disconnected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#git-repo-structure">Git Repository Structure</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-upgrades.html">Fast MNO Upgrades</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#prerequisites">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#resilient-cluster-architecture">Resilient Cluster Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#cloud-native-workload-design">Cloud-native Workload Design</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#zero-touch-automation">Zero-Touch Automation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#upgrade-stages">Upgrade Stages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#key-benefits">Key Benefits</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-introduction.html">Introduction to the Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#git-server">Git Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#container-registry">Container Registry</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#openshift-hub-cluster">OpenShift Hub Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#webserver">HTTP Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#s3-storage">S3 Storage Server</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="preparing-ztp-pipeline.html">Preparing the ZTP GitOps Pipeline</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#introduction-to-clusterinstance">Introduction to the ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#git-repository">Git Repository</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#deploying-ztp-gitops-pipeline">Deploying the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html">Crafting the Telco Core Reference Design Specification</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-common-policies">Crafting Common Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-group-policies">Crafting Group Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-site-policies">Crafting Site Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#adding-custom-policies">Adding Custom Content</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-testing-policies">Crafting Testing Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#configure-kustomization-for-policies">Configure Kustomization for Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#deploying-policies-using-gitops-pipeline">Deploying the Telco Core RDS using the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html">Deploying an Agent Based Install Cluster</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#baremetal-node-details">Bare Metal Node Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#pre-reqs">Deployment Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#clusterinstance">ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#reference-manifest-clusterinstance">Reference Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#extra-manifest-clusterinstance">Extra Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#preparing-installation">Get Ready for the Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#deploying-mno-using-gitops-pipeline">Deploying the OpenShift Cluster using the ZTP GitOps Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment">Monitoring the Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment-webui">Monitoring the Deployment via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment-cli">Monitoring the Deployment via the CLI</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="check-deployment-is-finished.html">Check MNO Deployment is finished</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-webui">Check MNO Deployment has Finished via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-cli">Check MNO Deployment has Finished via the CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html">Fast MNO Upgrade — Policy Preparation</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#verify-prereqs">Verifying the Starting State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#reference-crs-dir">Setting Up the Reference CRs Directory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#custom-manifest-mcp-worker-0">Custom Manifest for MCP workers</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#policies-19">Creating the 4.18 to 4.19 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-prep-19">Policy: core-upgrade-prep-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-ocp-19">Policy: core-upgrade-ocp-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-olm-19">Policy: core-upgrade-olm-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-validate-19">Policy: core-upgrade-validate-19</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#policies-20">Creating the 4.19 to 4.20 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-prep-20">Policy: core-upgrade-prep-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-ocp-20">Policy: core-upgrade-ocp-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-olm-20">Policy: core-upgrade-olm-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-core-upgrade-validate-20">Policy: core-upgrade-validate-20</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#worker-upgrade-policies">Defining the Worker Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policygen-finish">Creating the PolicyGenerator for Worker Zone Upgrade</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#placement-binding">Placement and Binding the Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#kustomization-all">Updating kustomization.yaml With The Three PolicyGenerators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#git-push-all">Committing and Pushing The Upgrade Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#validation-policygenerators">Validating the PolicyGenerators</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html">Fast MNO Upgrade — Execution</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#introduction">Executing the Full EUS-to-EUS Upgrade with TALM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgus">Defining the CGU Orchestration Chain</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-19">CGU: fast-upgrade-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-20">CGU: fast-upgrade-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-workers">CGU: fast-upgrade-workers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-finish">CGU: fast-upgrade-finish</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#trigger-upgrade">Triggering the Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage1">Monitoring — 4.18 to 4.19 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage2">Monitoring — 4.19 to 4.20 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage3">Monitoring — Worker Zone Upgrades</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-complete">Upgrade Complete</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html">Troubleshooting Tips</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html#verification-lab">Verification of the lab status</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#containerized-infra">Containerized Infrastructure Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#sno-vms">SNO Virtual Machines</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#hub">Hub cluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#dns">DNS resolution</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-blank">Policies not showing in the Governance console</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-not-applied">Policies not applied</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="common-pitfalls.html">Common Pitfalls</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#exec-probes-cpu-pinning">Exec Probes and CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#energy-saving-hw-profiles">Energy Saving Hardware Profiles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#secure-boot-oot-unsigned-drivers">Secure Boot and Unsigned OoT Drivers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#sriov-node-drain">SR-IOV Node Drain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#pod-disruption-budgets">Pod Disruption Budgets</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="closing-thoughts.html">Closing Thoughts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html">Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#playbook-run-role">The Playbook</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-tasks-overview">Pre-Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#i#what-preworkload-does">What Pre-Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#key-services-deployed">Key Services Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#workload-tasks-overview">Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#what-workload-does">What Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-key-components">Key Components Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-deployment">Deployment Phases</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#next-steps">Next Steps</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#delete-environment">Delete The Environment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="welcome.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="fast-mno-policy-preparation.html">Fast MNO Upgrade — Policy Preparation</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/RHsyseng/5g-core-deployments-on-ocp-lab/edit/lab-4.20/documentation/modules/ROOT/pages/fast-mno-policy-preparation.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Fast MNO Upgrade — Policy Preparation</h1>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section you will perform a fully automated EUS-to-EUS upgrade of the <code>mno</code> managed cluster from <strong>4.18</strong> to <strong>4.20</strong>. The cluster has 3 worker MachineConfigPools (<code>worker-0</code>, <code>worker-1</code>, <code>worker-2</code>), each containing 3 nodes in its own Kubernetes failure domain.</p>
+</div>
+<div class="paragraph">
+<p>Following the ZTP GitOps methodology used throughout this lab, the ACM upgrade policies are defined as <a href="policygen-deepdive.html#policy-generator" class="xref page">PolicyGenerator</a> CRs that reference individual Kubernetes resource files (reference CRs). These files are committed to the ZTP Git repository and ArgoCD automatically deploys the resulting RHACM policies to the Hub cluster. The <code>ClusterGroupUpgrade</code> (CGU) resources that orchestrate the upgrade stages are the only objects applied directly to the Hub cluster.</p>
+</div>
+<div class="paragraph">
+<p>You will:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify that the cluster and Hub components are in the correct starting state.</p>
+</li>
+<li>
+<p>Create the reference CRs and PolicyGenerator files for the 4.18 → 4.19 upgrade, commit them to the ZTP repository, and confirm ArgoCD deploys them.</p>
+</li>
+<li>
+<p>Create the reference CRs and PolicyGenerator files for the 4.19 → 4.20 upgrade and worker zone policies in the same way.</p>
+</li>
+<li>
+<p>Define and apply a chain of <code>ClusterGroupUpgrade</code> (CGU) resources to orchestrate the full upgrade sequence.</p>
+</li>
+<li>
+<p>Trigger the upgrade and monitor it as it progresses through each stage automatically.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Before starting, make sure you have read and understood the <a href="fast-mno-upgrades.html" class="xref page">Fast MNO Upgrades — Theory</a> section. All policies and CGUs in this lab are a direct application of the three-pillar methodology described there.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="verify-prereqs"><a class="anchor" href="#verify-prereqs"></a>Verifying the Starting State</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First, connect to the Hub cluster and confirm that all required components are in place before beginning the upgrade.</p>
+</div>
+<div class="paragraph">
+<p>Verify that the <code>mno</code> cluster is attached and available:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig get managedclusters</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME            HUB ACCEPTED   MANAGED CLUSTER URLS                     JOINED   AVAILABLE   AGE
+local-cluster   true           https://api.hub.5g-deployment.lab:6443   True     True         2h
+mno             true           https://api.mno.5g-deployment.lab:6443   True     True        57m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Confirm that TALM is running on the Hub:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig get pods -n openshift-operators -l app.kubernetes.io/component=talm</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME                                                            READY   STATUS    RESTARTS      AGE
+cluster-group-upgrades-controller-manager-v2-7c5d456f65-w84cb   1/1     Running   3 (1h ago)    1h</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now extract the kubeconfig for the <code>mno</code> spoke cluster so you can run commands against it directly:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig -n mno extract secret/mno-admin-kubeconfig --to=- &gt; ~/mno-kubeconfig</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify the current OCP version of the <code>mno</code> cluster. It should be at <code>v4.18.33</code>:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/mno-kubeconfig get clusterversion</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.18.33   True        False         21m     Cluster version is 4.18.33
+NAME      VERSION       AVAILABLE   PROGRESSING   SINCE   STATUS
+version   4.18.33   True        False         1h      Cluster version is 4.18.33</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify that the 3 custom worker MCPs exist, the default <code>worker</code> pool is empty, and all MCPs are currently paused:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/mno-kubeconfig get mcp -o custom-columns=NAME:.metadata.name,MACHINECOUNT:.status.machineCount,PAUSED:.spec.paused</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME       MACHINECOUNT   PAUSED
+master     3              false
+worker     0              false
+worker-0   3              false
+worker-1   3              false
+worker-2   3              false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, confirm that all 9 worker nodes are labeled with their corresponding Kubernetes failure domain:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/mno-kubeconfig get nodes</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME              STATUS   ROLES                  AGE     VERSION
+control-plane-0   Ready    control-plane,master   4d18h   v1.31.14
+control-plane-1   Ready    control-plane,master   4d19h   v1.31.14
+control-plane-2   Ready    control-plane,master   4d19h   v1.31.14
+worker-00         Ready    worker,worker-0        4d18h   v1.31.14
+worker-01         Ready    worker,worker-0        4d18h   v1.31.14
+worker-02         Ready    worker,worker-0        4d18h   v1.31.14
+worker-10         Ready    worker,worker-1        4d18h   v1.31.14
+worker-11         Ready    worker,worker-1        4d18h   v1.31.14
+worker-12         Ready    worker,worker-1        4d18h   v1.31.14
+worker-20         Ready    worker,worker-2        4d18h   v1.31.14
+worker-21         Ready    worker,worker-2        4d18h   v1.31.14
+worker-22         Ready    worker,worker-2        4d18h   v1.31.14</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reference-crs-dir"><a class="anchor" href="#reference-crs-dir"></a>Setting Up the Reference CRs Directory</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the ZTP GitOps workflow, ACM policies are not written by hand as raw Policy YAMLs. Instead, we use a pre-built container image that contains small, focused <strong>reference CR</strong> files that describe the desired Kubernetes objects, and then declare a <code>PolicyGenerator</code> CR that wraps them into ACM Policies automatically. ArgoCD watches the ZTP Git repository and pushes any new or updated policies to the Hub cluster. Refer to the <a href="rhacm-policies.html#policy-framework" class="xref page">RHACM Governance Policy Framework</a> and <a href="policygen-deepdive.html#policy-generator" class="xref page">PolicyGenerator Deep Dive</a> sections for background.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The reference CRs are stored in the <code>source-crs/</code> directory inside the <code>site-policies/fleet/active/v4.19/</code> and <code>site-policies/fleet/active/v4.20/</code> directories.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman login infra.5g-deployment.lab:8443 -u admin -p r3dh4t1! --tls-verify=false
+mkdir -p ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/v4.19/source-crs/reference-crs/
+TEMP_ID=$(podman create infra.5g-deployment.lab:8443/openshift4/openshift-telco-core-rds-rhel9:v4.19.4-4)
+podman cp $TEMP_ID:/usr/share/telco-core-rds/configuration/reference-crs/. ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/v4.19/source-crs/reference-crs/
+podman rm $TEMP_ID</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman login infra.5g-deployment.lab:8443 -u admin -p r3dh4t1! --tls-verify=false
+mkdir -p ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/v4.20/source-crs/reference-crs/
+TEMP_ID=$(podman create infra.5g-deployment.lab:8443/openshift4/openshift-telco-core-rds-rhel9:v4.20.2-3)
+podman cp $TEMP_ID:/usr/share/telco-core-rds/configuration/reference-crs/. ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/v4.20/source-crs/reference-crs/
+podman rm $TEMP_ID</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The final layout for the reference CRs for the 4.19 and 4.20 releases will be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">site-policies/fleet/active/
+├── v4.18
+│└── source-crs
+│  ├── custom-crs
+│    └── reference-crs
+│        ├── optional
+│        └── required
+├── v4.19
+│└── source-crs
+│    └── reference-crs
+│        ├── optional
+│        └── required
+└── v4.20
+|    └── source-crs
+│    └── reference-crs
+│        ├── optional
+│        └── required</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="custom-manifest-mcp-worker-0"><a class="anchor" href="#custom-manifest-mcp-worker-0"></a>Custom Manifest for MCP workers</h3>
+<div class="paragraph">
+<p>Let&#8217;s first create the custom manifest for our MCP worker-0, which does not exist in the reference CRs. It will be created based on the reference CRs for worker-1, worker-2, and worker-3.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+You will need to create the custom manifest for your MachineConfigPools workers based on the name you&#8217;ve given to your workers. In this case, we&#8217;ve named our MCP orkers: worker-0, worker-1, and worker-2. Notice that worker-1 and worker-2 are included as references in the source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml and source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml files, so we can just use them as templates.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: worker-0
+  labels:
+    machineconfiguration.openshift.io/role: worker-0
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values: [ worker, worker-0 ]
+  paused: false
+  maxUnavailable: "100%"
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-0: ""
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: worker-0
+  labels:
+    machineconfiguration.openshift.io/role: worker-0
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values: [ worker, worker-0 ]
+  paused: false
+  maxUnavailable: "100%"
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-0: ""
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now that we have the custom manifest for our MCP workers, we can create the policies for the upgrade to 4.19 and 4.20.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="automation-with-acm-and-talm"><a class="anchor" href="#automation-with-acm-and-talm"></a>Automation with ACM and TALM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The entire end-to-end procedure is orchestrated using Red Hat Advanced Cluster Management (ACM) and the Topology Aware Lifecycle Manager (TALM) operator.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Policies</strong>: ACM Policies are created on the Hub cluster for each distinct upgrade action (e.g., core-upgrade-ocp-19, core-upgrade-olm-19, core-upgrade-ocp-20, core-upgrade-workers-0, etc.). These policies are initially set to remediationAction: inform.</p>
+</li>
+<li>
+<p><strong>Orchestration</strong>: A series of ClusterGroupUpgrade (CGU) custom resources are used to trigger and manage these policies in the correct sequence. TALM is responsible for moving policies from an 'inform' state to an 'enforce' state.</p>
+</li>
+<li>
+<p><strong>Sequencing</strong>: The blockingCRs stanza within a CGU is used to create dependencies, ensuring that one stage (e.g., the upgrade to 4.20) does not begin until the prerequisite stage (e.g., the upgrade to 4.19) has successfully completed.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This approach transforms a complex, high-risk manual upgrade into a predictable, repeatable, and fully automated <em>zero-touch</em> operation that executes significantly faster than traditional methods.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="policies-19"><a class="anchor" href="#policies-19"></a>Creating the 4.18 → 4.19 Upgrade Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The core of the automation is a set of ACM Policies that declaratively define the desired state for each step of the upgrade. These policies are applied to the Hub cluster and remain in an inform state until activated by a ClusterGroupUpgrade (CGU).</p>
+</div>
+<div class="paragraph">
+<p>The following policies are created to manage the upgrade from version  v4.18 to v4.19.</p>
+</div>
+<div class="paragraph">
+<p>In this section we are going to present parts of the PolicyGenerator file that will be used to start the Fast MNO Upgrade. At the end of this section you will create the complete PolicyGenerator file based on the reference core-upgrade PolicyGenerator available in the telco-reference repository <a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/configuration/core-upgrade.yaml">here</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-prep-mid"><a class="anchor" href="#policy-core-upgrade-prep-mid"></a>Policy: core-upgrade-prep-19</h3>
+<div class="paragraph">
+<p>This is the <strong>preparation policy</strong>. It readies the spoke cluster for the control plane upgrade by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Updating the CatalogSource</strong>: It points the redhat-operators-disconnected catalog to the v4.19 index image. This ensures OLM can find the correct operator versions compatible with 4.19.</p>
+</li>
+<li>
+<p><strong>Pausing and Configuring Worker MCPs</strong>: It patches all worker MachineConfigPools (worker-0 through worker-3) to set paused: true. This is a critical safety measure to <strong>prevent worker nodes from upgrading while the control plane is in motion</strong>. It also pro-actively sets maxUnavailable: "100%" in preparation for the parallel worker upgrade phase later.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  - name: core-upgrade-prep-19
+    policyAnnotations:
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.19/source-crs/reference-crs/required/other/catalog-source.yaml
+        patches:
+        - spec:
+            image: infra.5g-deployment.lab:8443/redhat/redhat-operator-index:v4.19-1772552013
+        - status:
+            connectionState:
+              lastObservedState: READY
+      # Provide the required acknowledgement of the upgrade. This
+      # assumes that the verification has been done during planning
+      # lab/certification phase of project
+      # - path: reference-crs/optional/other/upgrade-ack.yaml
+      #   patches:
+      #   - data:
+      #       ack-4.15-kube-1.29-api-removals-in-4.16: "true"
+      - path: v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+        patches:
+        - spec:
+          # Adjust as needed based on spare capacity, cluster design, and application requirements
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml
+        patches:
+        - spec:
+          # Adjust as needed based on spare capacity, cluster design, and application requirements
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml
+        patches:
+        - spec:
+          # Adjust as needed based on spare capacity, cluster design, and application requirements
+            maxUnavailable: "100%"
+            paused: true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-ocp-mid"><a class="anchor" href="#policy-core-upgrade-ocp-mid"></a>Policy: core-upgrade-ocp-19</h3>
+<div class="paragraph">
+<p>This is the main upgrade policy. Its sole purpose is to target the ClusterVersion resource on the spoke cluster and instruct it to begin the upgrade. It sets the desired channel to stable-4.19 and provides the specific image and version (4.19.24) for the cluster to upgrade to.</p>
+</div>
+<div class="paragraph">
+<p>To obtain the correct <code>image</code> digest for your mirror registry, run:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman login infra.5g-deployment.lab:8443 -u admin -p r3dh4t1! --tls-verify=false --authfile ~/.docker/config.json
+oc adm release info --registry-config ~/.docker/config.json 4.19.24 | grep 'Pull From: '</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Replace the <code>image</code> value below with the output of that command.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  - name: core-upgrade-ocp-19
+    manifests:
+      - path: v4.19/source-crs/reference-crs/optional/other/ClusterVersion.yaml
+        patches:
+        - spec:
+            channel: stable-4.19
+            desiredUpdate:
+              # Replace version, image and status below with desired version
+              version: 4.19.24
+              image: infra.5g-deployment.lab:8443/openshift/release-images@sha256:3ef832b8bb0d56331035ba54af36c36be46d6c6dc1a41e300055692f02bb001d
+              force: true
+        - status:
+            history:
+            - version: 4.19.24
+              state: "Completed"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-olm-mid"><a class="anchor" href="#policy-core-upgrade-olm-mid"></a>Policy: core-upgrade-olm-19</h3>
+<div class="paragraph">
+<p>This is the operator lifecycle policy. After the control plane upgrades, this policy ensures all Operator Lifecycle Manager (OLM) Subscriptions (for cluster-logging, sriov-network-operator, odf-operator, etc.) are updated to their respective channels compatible with version 4.19.</p>
+</div>
+<div class="paragraph">
+<p>The following subscriptions are created to manage the upgrade from version v4.18 to v4.19.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  - name: core-upgrade-olm-19
+    policyAnnotations:
+      # Ensure that status for OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "60"
+    manifests:
+      - path: v4.19/source-crs/reference-crs/optional/logging/ClusterLogSubscription.yaml
+        patches:
+        - metadata:
+            annotations:
+              noop-for-triggering-noncompliance: "19"
+        - spec:
+            channel: stable-6.4
+            installPlanApproval: Automatic
+            name: cluster-logging
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/networking/sriov/SriovSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: sriov-network-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/storage/odf-external/odfSubscription.yaml
+        patches:
+        - spec:
+            channel: stable-4.19
+            installPlanApproval: Automatic
+            name: odf-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/networking/NMStateSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: kubernetes-nmstate-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/networking/metallb/metallbSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: metallb-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/scheduling/NROPSubscription.yaml
+        patches:
+        - spec:
+            channel: "4.19"
+            installPlanApproval: Automatic
+            name: numaresources-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+  # Ensure that all subscriptions are at the latest known, including
+  # subscriptions automatically created by OLM on behalf of higher
+  # level operators.</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-validate-mid"><a class="anchor" href="#policy-core-upgrade-validate-mid"></a>Policy: core-upgrade-validate-19</h3>
+<div class="paragraph">
+<p>This reference CR uses an <code>object-templates-raw</code> block to verify that all operator Subscriptions have reconciled after the upgrade.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The subscription-validator.yaml does not exist in 4.19, but it does exist in 4.20. We will use the one in 4.20 since it is a good practice to validate the OLM upgrade.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  - name: core-upgrade-validate-19
+    policyAnnotations:
+      # Ensure that propagation to OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/subscription-validator.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policygen-mid"><a class="anchor" href="#policygen-mid"></a>The PolicyGenerator for 4.18 → 4.19</h3>
+<div class="paragraph">
+<p>Now create the <code>PolicyGenerator</code> CR that bundles the reference CRs created above into four ACM Policies. The <code>placement.labelSelector</code> block defines which managed clusters receive the policies — TALM will add and remove these labels automatically as the upgrade progresses.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/core-upgrade-19.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: core-upgrade-19
+placementBindingDefaults:
+  name: core-upgrade-19-placement-binding
+policyDefaults:
+  namespace: ztp-policies
+  placement:
+    labelSelector:
+      matchExpressions:
+        - key: common
+          operator: In
+          values:
+            - ocp418
+            - ocp419
+        - key: rds
+          operator: In
+          values:
+            - core
+        - key: upgrade-fast-418-420
+          operator: Exists
+  remediationAction: inform
+  severity: low
+policies:
+  - name: core-upgrade-prep-19
+    policyAnnotations:
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.19/source-crs/reference-crs/required/other/catalog-source.yaml
+        patches:
+        - spec:
+            image: infra.5g-deployment.lab:8443/redhat/redhat-operator-index:v4.19-1772552013
+        - status:
+            connectionState:
+              lastObservedState: READY
+      - path: v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+        patches:
+        - spec:
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml
+        patches:
+        - spec:
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.19/source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml
+        patches:
+        - spec:
+            maxUnavailable: "100%"
+            paused: true
+  - name: core-upgrade-ocp-19
+    manifests:
+      - path: v4.19/source-crs/reference-crs/optional/other/ClusterVersion.yaml
+        patches:
+        - spec:
+            channel: stable-4.19
+            desiredUpdate:
+              # Replace version, image and status below with desired version
+              version: 4.19.24
+              image: infra.5g-deployment.lab:8443/openshift/release-images@sha256:3ef832b8bb0d56331035ba54af36c36be46d6c6dc1a41e300055692f02bb001d
+              force: true
+        - status:
+            history:
+            - version: 4.19.24
+              state: "Completed"
+  - name: core-upgrade-olm-19
+    policyAnnotations:
+      # Ensure that status for OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "60"
+    manifests:
+      - path: v4.19/source-crs/reference-crs/optional/logging/ClusterLogSubscription.yaml
+        patches:
+        - metadata:
+            annotations:
+              noop-for-triggering-noncompliance: "19"
+        - spec:
+            channel: stable-6.4
+            installPlanApproval: Automatic
+            name: cluster-logging
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/networking/sriov/SriovSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: sriov-network-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/storage/odf-external/odfSubscription.yaml
+        patches:
+        - spec:
+            channel: stable-4.19
+            installPlanApproval: Automatic
+            name: odf-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/networking/NMStateSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: kubernetes-nmstate-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/networking/metallb/metallbSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: metallb-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.19/source-crs/reference-crs/required/scheduling/NROPSubscription.yaml
+        patches:
+        - spec:
+            channel: "4.19"
+            installPlanApproval: Automatic
+            name: numaresources-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+  - name: core-upgrade-validate-19
+    policyAnnotations:
+      # Ensure that propagation to OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/subscription-validator.yaml
+EOF</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="policies-20"><a class="anchor" href="#policies-20"></a>Creating the 4.19 → 4.20 Upgrade Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following policies are created to manage the upgrade from version 4.19 to 4.20. The policies are exactly the same as the ones created for the 4.18 → 4.19 upgrade, but adapted in terms of version numbers for the 4.19 → 4.20 upgrade.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Notice that the path to the source CRs in all the policies points now v4.20, not v4.19 as in the previous section.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-prep-major"><a class="anchor" href="#policy-core-upgrade-prep-major"></a>Policy: core-upgrade-prep-20</h3>
+<div class="paragraph">
+<p>This is the preparation policy. It readies the spoke cluster for the control plane upgrade. This is exactly the same policy as <a href="#policy-core-upgrade-prep-mid">Policy: core-upgrade-prep-19</a> adapted for the 4.19 upgrade.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  - name: core-upgrade-prep-20
+    policyAnnotations:
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/required/other/catalog-source.yaml
+        patches:
+        - spec:
+            image: infra.5g-deployment.lab:8443/redhat/redhat-operator-index:v4.20-1769431701
+        - status:
+            connectionState:
+              lastObservedState: READY
+      # Provide the required acknowledgement of the upgrade. This
+      # assumes that the verification has been done during planning
+      # lab/certification phase of project
+      # - path: reference-crs/optional/other/upgrade-ack.yaml
+      #   patches:
+      #   - data:
+      #       ack-4.15-kube-1.29-api-removals-in-4.16: "true"
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+        patches:
+        - spec:
+          # Adjust as needed based on spare capacity, cluster design, and application requirements
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml
+        patches:
+        - spec:
+          # Adjust as needed based on spare capacity, cluster design, and application requirements
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml
+        patches:
+        - spec:
+          # Adjust as needed based on spare capacity, cluster design, and application requirements
+            maxUnavailable: "100%"
+            paused: true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-ocp-major"><a class="anchor" href="#policy-core-upgrade-ocp-major"></a>Policy: core-upgrade-ocp-20</h3>
+<div class="paragraph">
+<p>This is the main upgrade policy. Its sole purpose is to target the ClusterVersion resource on the spoke cluster and instruct it to begin the upgrade to 4.20.8. More information was detailed in the <a href="#policy-core-upgrade-ocp-mid">Policy: core-upgrade-ocp-19</a> section.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  - name: core-upgrade-ocp-20
+    manifests:
+      - path: v4.20/source-crs/reference-crs/optional/other/ClusterVersion.yaml
+        patches:
+        - spec:
+            channel: stable-4.20
+            desiredUpdate:
+              # Replace version, image and status below with desired version
+              version: 4.20.8
+              image: infra.5g-deployment.lab:8443/openshift/release-images@sha256:91606a5f04331ed3293f71034d4f480e38645560534805fe5a821e6b64a3f203
+              force: true
+        - status:
+            history:
+            - version: 4.20.8
+              state: "Completed"</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-olm-major"><a class="anchor" href="#policy-core-upgrade-olm-major"></a>Policy: core-upgrade-olm-20</h3>
+<div class="paragraph">
+<p>This is the operator lifecycle policy. After the control plane upgrades, this policy ensures all Operator Lifecycle Manager (OLM) Subscriptions are updated to their respective channels compatible with version 4.20.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">  - name: core-upgrade-olm-20
+    policyAnnotations:
+      # Ensure that status for OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "60"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/optional/logging/ClusterLogSubscription.yaml
+        patches:
+        - metadata:
+            annotations:
+              noop-for-triggering-noncompliance: "20"
+        - spec:
+            channel: stable-6.4
+            installPlanApproval: Automatic
+            name: cluster-logging
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/networking/sriov/SriovSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: sriov-network-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/storage/odf-external/odfSubscription.yaml
+        patches:
+        - spec:
+            channel: stable-4.20
+            installPlanApproval: Automatic
+            name: odf-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/networking/NMStateSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: kubernetes-nmstate-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/networking/metallb/metallbSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: metallb-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/scheduling/NROPSubscription.yaml
+        patches:
+        - spec:
+            channel: "4.20"
+            installPlanApproval: Automatic
+            name: numaresources-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policy-core-upgrade-validate-major"><a class="anchor" href="#policy-core-upgrade-validate-major"></a>Policy: core-upgrade-validate-20</h3>
+<div class="paragraph">
+<p>This is the validation policy. It serves as a final check to confirm that all OLM operators on the cluster have successfully updated and reconciled.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+  - name: core-upgrade-validate-20
+    policyAnnotations:
+      # Ensure that propagation to OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/subscription-validator.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="policygen-major"><a class="anchor" href="#policygen-major"></a>The PolicyGenerator for 4.19 → 4.20</h3>
+<div class="paragraph">
+<p>Now create the <code>PolicyGenerator</code> CR that bundles the reference CRs created above into four ACM Policies. The <code>placement.labelSelector</code> block defines which managed clusters receive the policies — TALM will add and remove these labels automatically as the upgrade progresses.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/core-upgrade-20.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: core-upgrade-20
+placementBindingDefaults:
+  name: core-upgrade-20-placement-binding
+policyDefaults:
+  namespace: ztp-policies
+  placement:
+    labelSelector:
+      matchExpressions:
+        - key: common
+          operator: In
+          values:
+            - ocp418
+            - ocp419
+        - key: rds
+          operator: In
+          values:
+            - core
+        - key: upgrade-fast-418-420
+          operator: Exists
+  remediationAction: inform
+  severity: low
+policies:
+  - name: core-upgrade-prep-20
+    policyAnnotations:
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/required/other/catalog-source.yaml
+        patches:
+        - spec:
+            image: infra.5g-deployment.lab:8443/redhat/redhat-operator-index:v4.20-1769431701
+        - status:
+            connectionState:
+              lastObservedState: READY
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+        patches:
+        - spec:
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml
+        patches:
+        - spec:
+            maxUnavailable: "100%"
+            paused: true
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml
+        patches:
+        - spec:
+            maxUnavailable: "100%"
+            paused: true
+  - name: core-upgrade-ocp-20
+    manifests:
+      - path: v4.20/source-crs/reference-crs/optional/other/ClusterVersion.yaml
+        patches:
+        - spec:
+            channel: stable-4.20
+            desiredUpdate:
+              # Replace version, image and status below with desired version
+              version: 4.20.8
+              image: infra.5g-deployment.lab:8443/openshift/release-images@sha256:91606a5f04331ed3293f71034d4f480e38645560534805fe5a821e6b64a3f203
+              force: true
+        - status:
+            history:
+            - version: 4.20.8
+              state: "Completed"
+  - name: core-upgrade-olm-20
+    policyAnnotations:
+      # Ensure that status for OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "60"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/optional/logging/ClusterLogSubscription.yaml
+        patches:
+        - metadata:
+            annotations:
+              noop-for-triggering-noncompliance: "20"
+        - spec:
+            channel: stable-6.4
+            installPlanApproval: Automatic
+            name: cluster-logging
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/networking/sriov/SriovSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: sriov-network-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/storage/odf-external/odfSubscription.yaml
+        patches:
+        - spec:
+            channel: stable-4.20
+            installPlanApproval: Automatic
+            name: odf-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/networking/NMStateSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: kubernetes-nmstate-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/networking/metallb/metallbSubscription.yaml
+        patches:
+        - spec:
+            channel: stable
+            installPlanApproval: Automatic
+            name: metallb-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+      - path: v4.20/source-crs/reference-crs/required/scheduling/NROPSubscription.yaml
+        patches:
+        - spec:
+            channel: "4.20"
+            installPlanApproval: Automatic
+            name: numaresources-operator
+            source: redhat-operators-disconnected
+            sourceNamespace: openshift-marketplace
+        - status:
+            state: AtLatestKnown
+  - name: core-upgrade-validate-20
+    policyAnnotations:
+      # Ensure that propagation to OLM created operators has time to propagate
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/subscription-validator.yaml
+EOF</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="worker-upgrade-policies"><a class="anchor" href="#worker-upgrade-policies"></a>Defining the Worker Upgrade Policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With the control plane policies ready to be upgraded to 4.20, the worker nodes are still paused. This final stage orchestrates the sequential, parallel upgrade of each worker MachineConfigPool (MCP).</p>
+</div>
+<div class="paragraph">
+<p>Next, we create a separate policy for each worker MCP. The sole purpose of each policy is to unpause its corresponding MCP by setting paused: false. The MCO on the spoke cluster will see this change and—because we set maxUnavailable: "100%" in the preparation policy—will begin upgrading all nodes in that MCP simultaneously.</p>
+</div>
+<div class="paragraph">
+<p>Here is the policy for worker-0. This manifest is duplicated for worker-1, worker-2, and worker-3.</p>
+</div>
+<div class="sect2">
+<h3 id="policygen-finish"><a class="anchor" href="#policygen-finish"></a>Creating the PolicyGenerator for Worker Zone Upgrade</h3>
+<div class="paragraph">
+<p>This PolicyGenerator generates one policy per worker MCP zone. Each policy unpauses its zone and waits for all 3 nodes to apply the pending MachineConfig and reboot. The three policies run concurrently, which is what makes this upgrade fast.</p>
+</div>
+<div class="paragraph">
+<p>The section of the PolicyGenerator for upgrading the workers should look like this:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/core-upgrade-finish.yaml
+apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+  name: core-upgrade-finish
+policyDefaults:
+  namespace: ztp-policies
+  policySets: []
+  placement:
+    labelSelector:
+      matchExpressions:
+        - key: common
+          operator: In
+          values:
+            - ocp418
+            - ocp419
+        - key: rds
+          operator: In
+          values:
+            - core
+        - key: upgrade-fast-418-420
+          operator: Exists
+  remediationAction: inform
+  severity: low
+policies:
+  - name: core-upgrade-workers-0
+    policyAnnotations:
+      # Ensure propagation time
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-0.yaml
+        patches:
+        - spec:
+            paused: false
+            maxUnavailable: "100%"
+          status:
+            conditions:
+            - type: Updated
+              status: "True"
+            - type: Updating
+              status: "False"
+  - name: core-upgrade-workers-1
+    policyAnnotations:
+      # Ensure propagation time
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml
+        patches:
+        - spec:
+            paused: false
+            maxUnavailable: "100%"
+          status:
+            conditions:
+            - type: Updated
+              status: "True"
+            - type: Updating
+              status: "False"
+  - name: core-upgrade-workers-2
+    policyAnnotations:
+      # Ensure propagation time
+      ran.openshift.io/soak-seconds: "30"
+    manifests:
+      - path: v4.20/source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml
+        patches:
+        - spec:
+            paused: false
+            maxUnavailable: "100%"
+          status:
+            conditions:
+            - type: Updated
+              status: "True"
+            - type: Updating
+              status: "False"
+EOF</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="placement-binding"><a class="anchor" href="#placement-binding"></a>Placement and Binding</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The PlacementRule and PlacementBinding are included into the PolicyGenerator CRs to apply all the policies related to the upgrade to 4.20, e.g cdocumentation/modules/ROOT/pages/installing-agentbasedinstall-cluster.adocontrol-plane and worker policies.</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The placementRule is configured to select all clusters with the following labels: common set to ocp418, ocp419, rds set to core, and the existence of the upgrade-fast-418-420 label. Cluster labeling will be automatically handled by the CGUs generated in subsequent sections.
+</td>
+</tr>
+</table>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Upon applying the CGUs custom resources to our MNO cluster, certain labels will be automatically added, while some of the 4.18 and 4.19 upgrade labels will be removed or replaced. This will result in a seamless, automatic upgrade from EUS 4.18 to EUS 4.20.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kustomization-all"><a class="anchor" href="#kustomization-all"></a>Updating kustomization.yaml With The Three PolicyGenerators</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that all three PolicyGenerator files are ready, update <code>kustomization.yaml</code> to include them all:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-policies/fleet/active/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - v4.18/
+generators:
+  - core-upgrade-19.yaml
+  - core-upgrade-20.yaml
+  - core-upgrade-finish.yaml
+EOF</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="git-push-all"><a class="anchor" href="#git-push-all"></a>Committing and Pushing The Upgrade Policies</h3>
+<div class="paragraph">
+<p>Commit the complete set of upgrade policy files to the ZTP Git repository and push:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/5g-deployment-lab/ztp-repository
+git add site-policies/fleet/active/
+git commit -m "Add complete upgrade policies for 4.18 to 4.20"
+git push</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="validation-policygenerators"><a class="anchor" href="#validation-policygenerators"></a>Validating the PolicyGenerators</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After ArgoCD syncs, verify that all the policies are shown in the Governance section of the ACM console. Notice that the policies are not targeting any cluster yet.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/fast-upgrade-policies-no-target.png" alt="Validation of the PolicyGenerators">
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s add the labels to the cluster and verify that the policies are now targeting the cluster.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig label managedcluster mno upgrade-fast-418-420=""</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice that all the policies are now targeting the cluster.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/fast-upgrade-policies-targeted.png" alt="Validation of the PolicyGenerators Targeted">
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s check as well the status of the policies using the CLI. It is important to notice that the policies related to the upgrade to 4.19 and 4.20 are non-compliant. On the other hand, all the worker core policies are compliant since when we installed the MNO cluster, we already configured the MachineConfigPools to be 100% maxUnavailable and not paused by default.</p>
+</div>
+<div class="paragraph">
+<p>Anyway, this will change soon when we will apply the CGUs. But, this will take place in the next section.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig get policies -n ztp-policies</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME                               REMEDIATION ACTION   COMPLIANCE STATE   AGE
+common-config-policy               inform               Compliant          14m
+common-config-policy-test          inform                                  5d21h
+common-operator-policy             inform               Compliant          14m
+common-operator-policy-test        inform                                  5d21h
+common-subscriptions-policy        inform               Compliant          14m
+common-subscriptions-policy-test   inform                                  5d21h
+core-upgrade-ocp-19                inform               NonCompliant       21m
+core-upgrade-ocp-20                inform               NonCompliant       21m
+core-upgrade-olm-19                inform               NonCompliant       21m
+core-upgrade-olm-20                inform               NonCompliant       21m
+core-upgrade-prep-19               inform               NonCompliant       21m
+core-upgrade-prep-20               inform               NonCompliant       21m
+core-upgrade-validate-19           inform               NonCompliant       21m
+core-upgrade-validate-20           inform               NonCompliant       21m
+core-upgrade-workers-0             inform               Compliant          19m
+core-upgrade-workers-1             inform               Compliant          19m
+core-upgrade-workers-2             inform               Compliant          19m</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="check-deployment-is-finished.html">Check MNO Deployment is finished</a></span>
+  <span class="next"><a href="fast-mno-cgu-execution.html">Fast MNO Upgrade — Execution</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

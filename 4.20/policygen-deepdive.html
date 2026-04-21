@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PolicyGen DeepDive :: LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</title>
+    <link rel="canonical" href="https://labs.sysdeseng.com/4.20/policygen-deepdive.html">
+    <link rel="prev" href="talm.html">
+    <link rel="next" href="deployment-considerations.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/solutions/telecommunications" target="_blank"><img src="../_/img/Logo-Red_Hat-A-Reverse-RGB.png" height="40px" alt="Red Hat Telco Solutions"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://labs.sysdeseng.com">LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="4.20" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="welcome.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html">Welcome</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html#showroom-intro">Introduction to the Showroom Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#resizing-sections">Resizing App Sections</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#multiple-terminals">Opening Multiple Terminals</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#web-browser">Web Browser</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#current-contributors">Current Contributors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#past-contributors">Past Contributors</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="introduction.html">Introduction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-aim">Who Is This Lab Aimed At?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#what-you-will-achieve">What You Will Achieve</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-software-versions">Lab Software Versions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="acronyms.html">Acronyms used in the lab</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="5g-core-context.html">5G Core Context</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#mcp">MachineConfigPools</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#zones">Zones and Topology Spread</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#numa-nodes">NUMA Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#huge-pages">Huge Pages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#cpu-pinning">CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#irq-load-balancing">IRQ Load Balancing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dpdk">DPDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#sriov">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dual-stack-networking">Dual-stack Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#storage">Persistent Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#service-mesh">Service Mesh</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="mno-intro.html">Introduction to Multi-Node OpenShift (MNO)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#telco-core-topology">Telco Core Cluster Topology</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#differences-from-standard-ocp">Differences from a Standard OCP Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#mno-requirements">Minimum Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#installation-methods">Installation Methods</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#extra-information">Extra Information</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="telco-related-infra-operators-intro.html">Introduction to Telco Related Infrastructure Operators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#node-tuning-operator">Node Tuning Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#sriov-operator">SR-IOV Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#ptp-operator">PTP Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#accelerators-operators">Accelerators Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cluster-logging-operator">Cluster Logging Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#lifecycle-operator">Lifecycle Agent Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#storage-operator">Storage Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#oadp-operator">OpenShift API for Data Protection Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cert-manager-operator">Cert-Manager Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-intro.html">Introduction to Zero Touch Provisioning (ZTP)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-intro.html#what-is-ztp">What is ZTP?</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html">OpenShift GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html#gitops">GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-principles">GitOps Principles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-patterns-ocp">GitOps Patterns on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#directories-vs-branches">Directories vs Branches</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#direct-commit-to-main">Direct commit to main</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#prs-review-cycles">Pull Requests and review cycles</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ocp-gitops.html#gitops-ocp">GitOps on OpenShift</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html">Hub Management Components</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#rhacm">Red Hat Advanced Cluster Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#mce">Multicluster Engine</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#ai">Infrastructure Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#gitops-operator">GitOps Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#sitegen">SiteGen</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#policygen">PolicyGen</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-at-scale.html#talm">Topology Aware Lifecycle Manager</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-workflow.html">ZTP Workflow</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#deployment-methods">Multi-Node OpenShift Deployments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#ztp-policies">Deployment Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html">RHACM Governance Policy Framework</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#policy-framework">Policy Framework</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html#policies">Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-status">Policy Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-remediation">Policy Remediation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#rhacm-policies-takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="managing-at-scale.html">Managing at Scale</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#inform-policies">Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#olm-subscriptions">OLM Subscriptions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#cluster-policies">Cluster Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html">Topology Aware Lifecycle Manager (TALM)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#inform-policies">Default Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html#cgu">Cluster Group Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="talm.html#autocreation-cgu">Auto Creation of CGUs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#phase-labels">Phase labels</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#waves">Policy Waves</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html">PolicyGen Deepdive</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#policygen-implementation">PolicyGen Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#kustomize-plugins">Kustomize Plugins</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#policy-generator">Policy Generator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#telco-core-profile">Telco Core Profile</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#cpu-partitioning">CPU Partitioning and Performance Tuning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#schedulable-cp">Workloads on Schedulable Control Planes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#node-configuration">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#service-mesh">Service Mesh</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#cno">Cluster Network Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#metallb">Load Balancer (MetalLB)</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#sr-iov-core">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#nmstate">NMState Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#logging-core">Log Collector and Forwarder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#power-management">Power Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#storage-odf">Storage — OpenShift Data Foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#monitoring-core">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#numa-scheduling">NUMA-Aware Scheduling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#security-core">Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#disconnected-core">Disconnected Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#policies-templating">Policies Templating</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#custom-policy-templates">Policies Custom Templating</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#kustomize-plugins-locally">Running Kustomize Plugins Locally</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html">Deployment Considerations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#hardware-configurations">Hardware configurations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#bios-settings">BIOS Settings</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#networking">Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#disconnected-environments">Disconnected Environments</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#connected-proxy">Connected through proxy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#fully-disconnected">Fully disconnected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#git-repo-structure">Git Repository Structure</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-upgrades.html">Fast MNO Upgrades</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#prerequisites">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#resilient-cluster-architecture">Resilient Cluster Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#cloud-native-workload-design">Cloud-native Workload Design</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#zero-touch-automation">Zero-Touch Automation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#upgrade-stages">Upgrade Stages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#key-benefits">Key Benefits</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-introduction.html">Introduction to the Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#git-server">Git Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#container-registry">Container Registry</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#openshift-hub-cluster">OpenShift Hub Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#webserver">HTTP Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#s3-storage">S3 Storage Server</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="preparing-ztp-pipeline.html">Preparing the ZTP GitOps Pipeline</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#introduction-to-clusterinstance">Introduction to the ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#git-repository">Git Repository</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#deploying-ztp-gitops-pipeline">Deploying the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html">Crafting the Telco Core Reference Design Specification</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-common-policies">Crafting Common Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-group-policies">Crafting Group Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-site-policies">Crafting Site Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#adding-custom-policies">Adding Custom Content</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-testing-policies">Crafting Testing Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#configure-kustomization-for-policies">Configure Kustomization for Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#deploying-policies-using-gitops-pipeline">Deploying the Telco Core RDS using the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html">Deploying an Agent Based Install Cluster</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#baremetal-node-details">Bare Metal Node Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#pre-reqs">Deployment Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#clusterinstance">ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#reference-manifest-clusterinstance">Reference Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#extra-manifest-clusterinstance">Extra Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#preparing-installation">Get Ready for the Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#deploying-mno-using-gitops-pipeline">Deploying the OpenShift Cluster using the ZTP GitOps Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment">Monitoring the Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment-webui">Monitoring the Deployment via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment-cli">Monitoring the Deployment via the CLI</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="check-deployment-is-finished.html">Check MNO Deployment is finished</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-webui">Check MNO Deployment has Finished via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-cli">Check MNO Deployment has Finished via the CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html">Fast MNO Upgrade — Policy Preparation</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#verify-prereqs">Verifying the Starting State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#reference-crs-dir">Setting Up the Reference CRs Directory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#custom-manifest-mcp-worker-0">Custom Manifest for MCP workers</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policies-19">Creating the 4.18 to 4.19 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-prep-19">Policy: core-upgrade-prep-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-ocp-19">Policy: core-upgrade-ocp-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-olm-19">Policy: core-upgrade-olm-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-validate-19">Policy: core-upgrade-validate-19</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policies-20">Creating the 4.19 to 4.20 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-prep-20">Policy: core-upgrade-prep-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-ocp-20">Policy: core-upgrade-ocp-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-olm-20">Policy: core-upgrade-olm-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-validate-20">Policy: core-upgrade-validate-20</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#worker-upgrade-policies">Defining the Worker Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policygen-finish">Creating the PolicyGenerator for Worker Zone Upgrade</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#placement-binding">Placement and Binding the Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#kustomization-all">Updating kustomization.yaml With The Three PolicyGenerators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#git-push-all">Committing and Pushing The Upgrade Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#validation-policygenerators">Validating the PolicyGenerators</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html">Fast MNO Upgrade — Execution</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#introduction">Executing the Full EUS-to-EUS Upgrade with TALM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgus">Defining the CGU Orchestration Chain</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-19">CGU: fast-upgrade-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-20">CGU: fast-upgrade-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-workers">CGU: fast-upgrade-workers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-finish">CGU: fast-upgrade-finish</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#trigger-upgrade">Triggering the Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage1">Monitoring — 4.18 to 4.19 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage2">Monitoring — 4.19 to 4.20 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage3">Monitoring — Worker Zone Upgrades</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-complete">Upgrade Complete</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html">Troubleshooting Tips</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html#verification-lab">Verification of the lab status</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#containerized-infra">Containerized Infrastructure Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#sno-vms">SNO Virtual Machines</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#hub">Hub cluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#dns">DNS resolution</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-blank">Policies not showing in the Governance console</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-not-applied">Policies not applied</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="common-pitfalls.html">Common Pitfalls</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#exec-probes-cpu-pinning">Exec Probes and CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#energy-saving-hw-profiles">Energy Saving Hardware Profiles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#secure-boot-oot-unsigned-drivers">Secure Boot and Unsigned OoT Drivers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#sriov-node-drain">SR-IOV Node Drain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#pod-disruption-budgets">Pod Disruption Budgets</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="closing-thoughts.html">Closing Thoughts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html">Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#playbook-run-role">The Playbook</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-tasks-overview">Pre-Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#i#what-preworkload-does">What Pre-Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#key-services-deployed">Key Services Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#workload-tasks-overview">Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#what-workload-does">What Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-key-components">Key Components Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-deployment">Deployment Phases</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#next-steps">Next Steps</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#delete-environment">Delete The Environment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="welcome.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="policygen-deepdive.html">PolicyGen Deepdive</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/RHsyseng/5g-core-deployments-on-ocp-lab/edit/lab-4.20/documentation/modules/ROOT/pages/policygen-deepdive.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">PolicyGen DeepDive</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>As we saw in an earlier section of the lab, we can leverage <a href="rhacm-policies.html">RHACM policies</a> to get our clusters configured the way we want. We also introduced the <a href="ztp-at-scale.html#policygen">Policy Generator component</a> which helps us to create a set of policies based on <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-ran/configuration/source-crs">pre-baked templates</a> (source-crs) crafted by the Red Hat CNF team.</p>
+</div>
+<div class="paragraph">
+<p>In this section, we are going to get into the implementation details of the Policy Generator plugin.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+In Red Hat OpenShift 4.16 a new templating mechanism called Red Hat Advanced Cluster Management for Kubernetes (RHACM) Policy Generator was released to eventually replace Policy Generator Template (PGT) as the standard way to generate Red Hat Advanced Cluster Management for Kubernetes policies. Currently, both mechanisms can be used in GitOps ZTP to generate RHACM policies for managed clusters. However, using RHACM and PolicyGenerator CRs is the recommended approach for managing policies and deploying them to managed clusters. This replaces the use of PolicyGenTemplate CRs for this purpose which will be deprecated in an upcoming OpenShift Container Platform release. More information about the differences between them can be found in this <a href="https://developers.redhat.com/articles/2025/02/07/migrate-rhacm-policy-generator-openshift-416#">blog</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="policygen-implementation"><a class="anchor" href="#policygen-implementation"></a>PolicyGen Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The PolicyGen is implemented as a Kustomize generator plugin called <code>policygenerator</code>. This allows for any Kustomize configuration (e.g. patches, common labels) to be applied to the generated policies. This also means that the policy generator can be integrated into existing GitOps processes that support Kustomize, such as RHACM Application Lifecycle Management and OpenShift GitOps (i.e. ArgoCD).</p>
+</div>
+<div class="paragraph">
+<p>The <code>policygenerator</code> plugin reads the <code>PolicyGenerator</code> manifests and generates the required Kubernetes manifest to configure an RHACM Policy targeting a set of clusters. Code is located in the <a href="https://github.com/open-cluster-management-io/policy-generator-plugin">policy-generator-plugin</a> Git repository.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kustomize-plugins"><a class="anchor" href="#kustomize-plugins"></a>Kustomize Plugins</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As we already said, PolicyGen is a Kustomize plugin. Kustomize plugins work as described below.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+When installing these tools in ArgoCD running on a hub cluster the configuration described in this section is handled automatically. The ArgoCD operator will find the plugin binaries and use them to generate CRs from PolicyGenerator manifests. This section is provided as background/reference.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The user has a path configured in Kustomize for plugins (defaults to <code>~/.config/kustomize/plugin/</code>), inside this path different folders are configured in a way that Kustomize can understand what plugin needs to be executed under which situation. Let&#8217;s explain this.</p>
+</div>
+<div class="paragraph">
+<p>If we look at this <code>kustomization.yaml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+generators:
+  - common-policies/common.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We see that under <code>generators</code> section we have a yaml file, <em>generators</em> tell Kustomize that some plugin needs to be run to interpret these files. The way Kustomize knows which plugin needs to be executed is by looking at the <code>GroupVersionKind (GVK)</code> of the files. Following with above example we will see the following GVK:</p>
+</div>
+<div class="paragraph">
+<p><strong>common-policies/common.yaml</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As we can see the group is <code>policy.open-cluster-management.io</code>, version is <code>v1</code> and kind is <code>PolicyGenerator</code>.</p>
+</div>
+<div class="paragraph">
+<p>Earlier, we talked about the Kustomzie plugins path, and how it is required to have a proper folder structure so Kustomize knows which plugin needs to be executed. Using the example above we can explain what Kustomize will do for generating this file.</p>
+</div>
+<div class="paragraph">
+<p><strong>common-policies/common.yaml</strong></p>
+</div>
+<div class="paragraph">
+<p>Kustomize will get the GVK and after that will go to the plugins path and execute the plugin binary, the path for the binary is <code>$KUSTOMIZE_PLUGINS_PATH/&lt;group&gt;/&lt;version&gt;/&lt;kind&gt;/&lt;pluginbinary&gt;</code>. In this case Kustomize will execute the binary at <code>~/.config/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator</code>.</p>
+</div>
+<div class="sect2">
+<h3 id="policy-generator"><a class="anchor" href="#policy-generator"></a>Policy Generator</h3>
+<div class="paragraph">
+<p>The policygenerator plugin reads the PolicyGenerator manifests and uses the information provided in these files to output a set of RHACM policies that will be used for different purposes, from day2ops to monitoring the cluster health. It makes use of templated policies that can be found <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-ran/configuration/source-crs">here</a>.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+A high level view of the installation and configuration workflow can be found in the previous section <a href="ztp-workflow.html">ZTP workflow</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="telco-core-profile"><a class="anchor" href="#telco-core-profile"></a>Telco Core Profile</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Red Hat CNF team has crafted specific configurations to run large-scale telco applications on OpenShift Container Platform clusters. These include control plane functions such as signaling and aggregation, as well as centralized data plane functions like 5G User Plane Functions (UPF). All the configurations described below are expected to be present in a cluster running Telco Core workloads.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Some of these configurations are applied at install time (through the use of extra-manifests) and others are configured through Policy automatically after the cluster joins the RHACM Hub.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/5g-core-networking.png" alt="Telco Core reference design networking topology">
+</div>
+</div>
+<div class="paragraph">
+<p>The picture above describes the networking topology covered by the Telco Core profile. A more in-depth explanation is covered in the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/scalability_and_performance/telco-core-ref-design-specs#telco-core-rds-components_telco-core">Telco Core reference design components</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="cpu-partitioning"><a class="anchor" href="#cpu-partitioning"></a>CPU Partitioning and Performance Tuning</h3>
+<div class="paragraph">
+<p>CPU partitioning improves performance and reduces latency by separating sensitive workloads from general-purpose tasks, interrupts, and driver work queues. Unlike the RAN DU profile, Telco Core clusters use the standard (non-realtime) kernel with IRQ balancing enabled on worker nodes.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+CPU partitioning must be configured during the initial day-zero cluster installation and cannot be enabled or changed afterwards.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Key capabilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enables kubelet features: cpu manager, topology manager, memory manager.</p>
+</li>
+<li>
+<p>Configures reserved and isolated cpusets.</p>
+</li>
+<li>
+<p>Configures huge pages.</p>
+</li>
+<li>
+<p>Supports per-pod power management via C-states for latency-sensitive workloads.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/performance/PerformanceProfile.yaml">PerformanceProfile Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="power-management"><a class="anchor" href="#power-management"></a>Power Management</h3>
+<div class="paragraph">
+<p>Use the <code>PerformanceProfile</code> CR to configure clusters with high power mode, low power mode, or mixed mode depending on workload latency requirements. Per-pod power management via C-states is available for Guaranteed QoS pods with dedicated pinned CPUs, allowing fine-grained latency control per workload.</p>
+</div>
+<div class="paragraph">
+<p>Power configuration relies on appropriate BIOS configuration (C-states and P-states enabled). Configuration varies between hardware vendors.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="schedulable-cp"><a class="anchor" href="#schedulable-cp"></a>Workloads on Schedulable Control Planes</h3>
+<div class="paragraph">
+<p>Telco Core supports an optional schedulable control plane variant that allows user workloads to run on bare-metal master nodes to optimize resource utilization. This feature is only applicable to clusters with bare-metal control plane nodes.</p>
+</div>
+<div class="paragraph">
+<p>Enabling schedulable control planes can be configured either at install time or as a Day 2 operation after the initial cluster installation.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Workloads running on control plane nodes must be tested and verified to ensure they do not interfere with core cluster functions. Any workload that reconfigures kernel arguments or system-wide sysctls is not permitted on control plane nodes.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="node-configuration"><a class="anchor" href="#node-configuration"></a>Node Configuration</h3>
+<div class="paragraph">
+<p>Node configuration for Telco Core clusters is applied at install time through extra-manifests. These manifests configure kernel modules, mount namespaces, and crash reporting required by telco workloads.</p>
+</div>
+<div class="paragraph">
+<p>The following extra-manifests are applied during installation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/control-plane-load-kernel-modules.yaml">control-plane-load-kernel-modules.yaml</a> — loads additional kernel modules (nfnetlink_log, nf_tables, nft_nat, ip_gre, sctp, and others) on control plane nodes.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/worker-load-kernel-modules.yaml">worker-load-kernel-modules.yaml</a> — loads the same set of additional kernel modules on worker nodes.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/sctp_module_mc.yaml">sctp_module_mc.yaml</a> — optional manifest to load the SCTP kernel module on worker nodes.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/mount_namespace_config_master.yaml">mount_namespace_config_master.yaml</a> — creates a container mount namespace on control plane nodes to reduce system mount scanning overhead (visible to kubelet/CRI-O).</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/mount_namespace_config_worker.yaml">mount_namespace_config_worker.yaml</a> — same as above for worker nodes.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/kdump-master.yaml">kdump-master.yaml</a> — configures kdump crash reporting on master nodes.</p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/kdump-worker.yaml">kdump-worker.yaml</a> — configures kdump crash reporting on worker nodes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The following optional custom-manifests define additional <code>MachineConfigPool</code> worker roles for MCP-based node grouping, which is <strong>critical for minimizing upgrade windows</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/custom-manifests/mcp-worker-1.yaml">mcp-worker-1.yaml</a></p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/custom-manifests/mcp-worker-2.yaml">mcp-worker-2.yaml</a></p>
+</li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/custom-manifests/mcp-worker-3.yaml">mcp-worker-3.yaml</a></p>
+</li>
+<li>
+<p>More MachineConfigPools can be created depending on your cluster topology.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="service-mesh"><a class="anchor" href="#service-mesh"></a>Service Mesh</h3>
+<div class="paragraph">
+<p>Telco Core cloud-native functions (CNFs) typically require a Service Mesh implementation. The specific Service Mesh features, performance requirements, and choice of implementation are dependent on the application and are outside the scope of the reference design. The implementation must account for the impact on cluster resource usage and the additional latency introduced in pod networking.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="cno"><a class="anchor" href="#cno"></a>Cluster Network Operator</h3>
+<div class="paragraph">
+<p>The Cluster Network Operator (CNO) deploys and manages cluster network components including the default OVN-Kubernetes network plugin. It enables multiple secondary networks for traffic separation (MACVLAN, additional CNI configurations) and configures OVN-K with the <code>routingViaHost</code> option so that pod egress traffic uses the kernel routing table and applied static routes.</p>
+</div>
+<div class="paragraph">
+<p>The Whereabouts CNI plugin provides dynamic IPv4 and IPv6 addressing for additional pod network interfaces without requiring a DHCP server.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/Network.yaml">Network CR Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/networkAttachmentDefinition.yaml">NetworkAttachmentDefinition Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="metallb"><a class="anchor" href="#metallb"></a>Load Balancer (MetalLB)</h3>
+<div class="paragraph">
+<p>MetalLB is the load-balancer implementation for Telco Core bare-metal clusters. It uses BGP to advertise service IP addresses externally and enables Kubernetes services to get external IPs added to the host network. Traffic separation across VLANs is achieved by combining <code>BGPAdvertisement</code>, <code>BGPPeer</code>, and <code>NodeNetworkConfigurationPolicy</code> CRs.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/metallb/metallb.yaml">MetalLB CR Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/metallb/addr-pool.yaml">IPAddressPool Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/metallb/bgp-peer.yaml">BGPPeer Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/metallb/bgp-advr.yaml">BGPAdvertisement Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/metallb/bfd-profile.yaml">BFDProfile Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sr-iov-core"><a class="anchor" href="#sr-iov-core"></a>SR-IOV</h3>
+<div class="paragraph">
+<p>SR-IOV enables physical functions (PFs) to be divided into multiple virtual functions (VFs) assigned to pods for high-throughput networking. Both <code>netdevice</code> (kernel VFs) and <code>vfio</code> (DPDK) modes are supported. SR-IOV is used for signaling workloads (SCTP, REST, gRPC) and user-plane DPDK networking.</p>
+</div>
+<div class="paragraph">
+<p>The SR-IOV Network Operator automatically enables IOMMU on the kernel command line when configured.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/sriov/SriovOperatorConfig.yaml">SriovOperatorConfig Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/sriov/sriovNetworkNodePolicy.yaml">SriovNetworkNodePolicy Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/sriov/sriovNetwork.yaml">SriovNetwork Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="nmstate"><a class="anchor" href="#nmstate"></a>NMState Operator</h3>
+<div class="paragraph">
+<p>The Kubernetes NMState Operator provides a Kubernetes API for performing state-driven network configuration across cluster nodes. It manages VLANs, bonding (LACP), static routes, MTU settings, and host interface configuration. It is also used to configure SR-IOV VF interfaces (VLANs, MTU) when VFs are used for host networking.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/NMState.yaml">NMState CR Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="logging-core"><a class="anchor" href="#logging-core"></a>Log Collector and Forwarder</h3>
+<div class="paragraph">
+<p>The Cluster Logging Operator enables collection and shipping of audit and infrastructure logs off the node to a remote archive using Kafka. Application logs are not included in the reference configuration.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Logging is optional in the Telco Core RDS. Including application logs requires evaluating the logging rate and allocating sufficient additional CPU resources to the reserved set.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/optional/logging/ClusterLogForwarder.yaml">ClusterLogForwarder Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="storage-odf"><a class="anchor" href="#storage-odf"></a>Storage — OpenShift Data Foundation</h3>
+<div class="paragraph">
+<p>Telco Core applications require highly available persistent storage. OpenShift Data Foundation (ODF) is reommended to be deployed in <strong>external mode</strong>, where ODF connects to a dedicated external Red Hat Ceph Storage cluster. This approach allows the storage cluster to be shared across multiple OCP clusters in the same region and enables independent lifecycle management of storage and OCP infrastructure.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Storage network traffic should be isolated from other cluster networks using VLAN isolation to reduce security risk.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/storage/odf-external/odfNS.yaml">ODF Namespace Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/storage/odf-external/odfOperGroup.yaml">ODF OperatorGroup Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/storage/odf-external/odfSubscription.yaml">ODF Subscription Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/storage/odf-external/01-rook-ceph-external-cluster-details.secret.yaml">Ceph External Cluster Details Secret</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/storage/odf-external/02-ocs-external-storagecluster.yaml">OCS StorageCluster Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="monitoring-core"><a class="anchor" href="#monitoring-core"></a>Monitoring</h3>
+<div class="paragraph">
+<p>The Cluster Monitoring Operator (CMO) provides metrics, dashboards, and alerting for platform components and user projects. For Telco Core the reference configuration reduces the Prometheus retention period from the default (primary metrics storage is external to the cluster) and extends Prometheus to forward alerts to the RHACM hub for aggregation.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The monitoring configuration is optional in the Telco Core RDS. The CMO is included by default in OpenShift Container Platform; only the custom tuning ConfigMap is optional.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/optional/other/monitoring-config-cm.yaml">ClusterMonitoring ConfigMap Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="numa-scheduling"><a class="anchor" href="#numa-scheduling"></a>NUMA-Aware Scheduling</h3>
+<div class="paragraph">
+<p>The NUMA Resources Operator (NROP) enables topology-aware scheduling so that pods requiring exclusive or dedicated CPUs are placed on nodes where the required CPUs are available within a single NUMA node. This is required for clusters with multi-NUMA node hardware.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/scheduling/nrop.yaml">NUMAResourcesOperator Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/scheduling/sched.yaml">NUMAResourcesScheduler Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="disconnected-core"><a class="anchor" href="#disconnected-core"></a>Disconnected Environment</h3>
+<div class="paragraph">
+<p>Telco Core clusters are installed in networks without direct internet access. All container images (OCP, Day 2 OLM Operators, application workloads) must be available in a disconnected registry. A unique name is required for all custom <code>CatalogSource</code> resources.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/other/catalog-source.yaml">CatalogSource Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/other/operator-hub.yaml">OperatorHub Manifest</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/other/idms.yaml">ImageDigestMirrorSet Manifest</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="security-core"><a class="anchor" href="#security-core"></a>Security</h3>
+<div class="paragraph">
+<p>Telco Core clusters require hardening against multiple attack vectors. Key security configurations include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Rootless DPDK pods</strong>: conformant DPDK pods can run without root privileges using a tap device. Requires the <code>container_use_devices</code> SELinux boolean to be enabled on the host.</p>
+</li>
+<li>
+<p><strong>Seccomp</strong>: all pods should run with the <code>RuntimeDefault</code> (or stronger) seccomp profile.</p>
+</li>
+<li>
+<p><strong>SecurityContextConstraints (SCC)</strong>: all workload pods should run with <code>restricted-v2</code> or <code>restricted</code> SCC.</p>
+</li>
+<li>
+<p><strong>Storage network isolation</strong>: the storage network must not be reachable or routable from other cluster networks.</p>
+</li>
+<li>
+<p><strong>Secure boot</strong>: the recommended boot configuration to ensure only signed kernel modules are loaded.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="policies-templating"><a class="anchor" href="#policies-templating"></a>Policies Templating</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Policies templating is a bit different, we have a set of base configuration CRs, known as source-crs, that we can use. This set of CRs can be found <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you access this link you will see lots of files divided into required and optional sections.</p>
+</div>
+<div class="paragraph">
+<p>These CRs are referenced (by filename) from the PolicyGenerator CRs in Git. The PolicyGenerator CRs act as a manifest of which configuration CRs should be included and how they should be combined into Policy CRs. In addition, the PolicyGenerator can contain an "overlay" (or patch) that is applied to the CR before it is wrapped into the Policy.</p>
+</div>
+<div class="paragraph">
+<p>The way this works is a follows. We will have one or more PolicyGenerators where we will reference these base configuration CRs. We can see an example <a href="https://github.com/openshift-kni/cnf-features-deploy/blob/release-4.20/ztp/gitops-subscriptions/argocd/example/policygentemplates/group-du-standard-ranGen.yaml">here</a>.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s use the following PolicyGenTemplate as example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: policy.open-cluster-management.io/v1
+kind: PolicyGenerator
+metadata:
+ name: "test"
+ namespace: "test"
+placementBindingDefaults:
+  name: test-placement-binding
+policyDefaults:
+  namespace: ztp-policies
+  placement:
+    labelSelector:
+      group-du-sno: ""
+      logicalGroup: "active"
+  remediationAction: inform
+  severity: low
+  namespaceSelector:
+    exclude:
+      - kube-*
+    include:
+      - '*'
+  evaluationInterval:
+    compliant: 10m
+    noncompliant: 10s
+policies:
+- name: test-policy
+  policyAnnotations:
+    ran.openshift.io/ztp-deploy-wave: "10"
+  manifests:
+    - path: reference-crs/required/networking/sriov/SriovOperatorConfig.yaml
+    - path: reference-crs/required/performance/PerformanceProfile.yaml
+      patches:
+      spec:
+        cpu:
+          isolated: "2-19,22-39"
+          reserved: "0-1,20-21"
+        hugepages:
+          defaultHugepagesSize: 1G
+          pages:
+            - size: 1G
+              count: 32</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We can see that the PolicyGenerator is targeting two base configuration CRs: <code>SriovOperatorConfig.yaml</code> and <code>PerformanceProfile.yaml</code>.</p>
+</div>
+<div class="paragraph">
+<p>The first source CR, <code>SriovOperatorConfig.yaml</code>, is not overriding any settings, we can tell this because we don&#8217;t have any <code>patches</code> section below the <code>path</code>. That means that the final policy will include the configuration CR without modification (<a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/networking/sriov/SriovOperatorConfig.yaml">base SriovOperatorConfig configuration CR</a>).</p>
+</div>
+<div class="paragraph">
+<p>The second source CR, <code>PerformanceProfile.yaml</code>, is overriding some parameters in the <code>spec</code>. That means that the final policy will be configured as a merge of the <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs/required/performance/PerformanceProfile.yaml">original CR</a> plus the custom overrides we provided in the PolicyGenerator.</p>
+</div>
+<div class="sect2">
+<h3 id="custom-policy-templates"><a class="anchor" href="#custom-policy-templates"></a>Policies Custom Templating</h3>
+<div class="paragraph">
+<p>In the previous section we have seen how we can use pre-defined templates to craft our policies, sometimes we may need to configure things that do not have a specific template pre-defined. In such cases, we can create our own templates by creating the template files within the same repository. Complete information can be found in <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/managing-cluster-policies-with-policygentemplate-resources#ztp-adding-new-content-to-gitops-ztp_ztp-advanced-policy-config">the docs</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="kustomize-plugins-locally"><a class="anchor" href="#kustomize-plugins-locally"></a>Running Kustomize Plugins Locally</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We have described how Argo CD makes use of the <code>policygenerator</code> plugin to generate the required manifests for our 5G Core deployments. In this section, we are going to cover how to run this plugin locally which can be useful while troubleshooting or getting a preview of what the files will look like when generated via Argo CD.</p>
+</div>
+<div class="paragraph">
+<p>By running the steps below we will get the plugin installed in our system. Kustomize should be already installed, you can get it from the <a href="https://github.com/kubernetes-sigs/kustomize/releases/">releases page</a>.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir -p ~/.config/kustomize/plugin
+mkdir -p ~/.config/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator
+podman cp $(podman create --name policygentool --rm registry.redhat.io/rhacm2/multicluster-operators-subscription-rhel9:v2.15.1-1):/policy-generator/PolicyGenerator-not-fips-compliant ~/.config/kustomize/plugin/policy.open-cluster-management.io/v1/policygenerator/PolicyGenerator
+podman rm -f policygentool</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now that we have the plugins locally we can run them:</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+We need to enable the alpha plugins by using the parameter <code>--enable-alpha-plugins</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">kustomize build site-policies/ --enable-alpha-plugins</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>We will get the output (manifests that will be consumed by the RHACM Hub).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: ztp-policies
+  name: ztp-policies
+---
+&lt;OUTPUT_OMITTED&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="talm.html">Topology Aware Lifecycle Manager (TALM)</a></span>
+  <span class="next"><a href="deployment-considerations.html">Deployment Considerations</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

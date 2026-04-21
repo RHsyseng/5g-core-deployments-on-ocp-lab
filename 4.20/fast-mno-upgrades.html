@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Fast MNO Upgrades :: LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</title>
+    <link rel="canonical" href="https://labs.sysdeseng.com/4.20/fast-mno-upgrades.html">
+    <link rel="prev" href="deployment-considerations.html">
+    <link rel="next" href="lab-environment-introduction.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/solutions/telecommunications" target="_blank"><img src="../_/img/Logo-Red_Hat-A-Reverse-RGB.png" height="40px" alt="Red Hat Telco Solutions"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://labs.sysdeseng.com">LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="4.20" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="welcome.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html">Welcome</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html#showroom-intro">Introduction to the Showroom Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#resizing-sections">Resizing App Sections</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#multiple-terminals">Opening Multiple Terminals</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#web-browser">Web Browser</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#current-contributors">Current Contributors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#past-contributors">Past Contributors</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="introduction.html">Introduction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-aim">Who Is This Lab Aimed At?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#what-you-will-achieve">What You Will Achieve</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-software-versions">Lab Software Versions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="acronyms.html">Acronyms used in the lab</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="5g-core-context.html">5G Core Context</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#mcp">MachineConfigPools</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#zones">Zones and Topology Spread</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#numa-nodes">NUMA Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#huge-pages">Huge Pages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#cpu-pinning">CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#irq-load-balancing">IRQ Load Balancing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dpdk">DPDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#sriov">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dual-stack-networking">Dual-stack Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#storage">Persistent Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#service-mesh">Service Mesh</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="mno-intro.html">Introduction to Multi-Node OpenShift (MNO)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#telco-core-topology">Telco Core Cluster Topology</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#differences-from-standard-ocp">Differences from a Standard OCP Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#mno-requirements">Minimum Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#installation-methods">Installation Methods</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#extra-information">Extra Information</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="telco-related-infra-operators-intro.html">Introduction to Telco Related Infrastructure Operators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#node-tuning-operator">Node Tuning Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#sriov-operator">SR-IOV Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#ptp-operator">PTP Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#accelerators-operators">Accelerators Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cluster-logging-operator">Cluster Logging Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#lifecycle-operator">Lifecycle Agent Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#storage-operator">Storage Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#oadp-operator">OpenShift API for Data Protection Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cert-manager-operator">Cert-Manager Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-intro.html">Introduction to Zero Touch Provisioning (ZTP)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-intro.html#what-is-ztp">What is ZTP?</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html">OpenShift GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html#gitops">GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-principles">GitOps Principles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-patterns-ocp">GitOps Patterns on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#directories-vs-branches">Directories vs Branches</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#direct-commit-to-main">Direct commit to main</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#prs-review-cycles">Pull Requests and review cycles</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ocp-gitops.html#gitops-ocp">GitOps on OpenShift</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html">Hub Management Components</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#rhacm">Red Hat Advanced Cluster Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#mce">Multicluster Engine</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#ai">Infrastructure Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#gitops-operator">GitOps Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#sitegen">SiteGen</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#policygen">PolicyGen</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-at-scale.html#talm">Topology Aware Lifecycle Manager</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-workflow.html">ZTP Workflow</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#deployment-methods">Multi-Node OpenShift Deployments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#ztp-policies">Deployment Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html">RHACM Governance Policy Framework</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#policy-framework">Policy Framework</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html#policies">Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-status">Policy Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-remediation">Policy Remediation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#rhacm-policies-takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="managing-at-scale.html">Managing at Scale</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#inform-policies">Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#olm-subscriptions">OLM Subscriptions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#cluster-policies">Cluster Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html">Topology Aware Lifecycle Manager (TALM)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#inform-policies">Default Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html#cgu">Cluster Group Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="talm.html#autocreation-cgu">Auto Creation of CGUs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#phase-labels">Phase labels</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#waves">Policy Waves</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html">PolicyGen Deepdive</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policygen-deepdive.html#policygen-implementation">PolicyGen Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#kustomize-plugins">Kustomize Plugins</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#policy-generator">Policy Generator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#telco-core-profile">Telco Core Profile</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#cpu-partitioning">CPU Partitioning and Performance Tuning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#schedulable-cp">Workloads on Schedulable Control Planes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#node-configuration">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#service-mesh">Service Mesh</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#cno">Cluster Network Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#metallb">Load Balancer (MetalLB)</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#sr-iov-core">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#nmstate">NMState Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#logging-core">Log Collector and Forwarder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#numa-scheduling">NUMA-Aware Scheduling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#security-core">Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#disconnected-core">Disconnected Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policygen-deepdive.html#kustomize-plugins-locally">Running Kustomize Plugins Locally</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html">Deployment Considerations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#hardware-configurations">Hardware configurations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#bios-settings">BIOS Settings</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#networking">Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#disconnected-environments">Disconnected Environments</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#connected-proxy">Connected through proxy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#fully-disconnected">Fully disconnected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#git-repo-structure">Git Repository Structure</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-upgrades.html">Fast MNO Upgrades</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#prerequisites">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#resilient-cluster-architecture">Resilient Cluster Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#cloud-native-workload-design">Cloud-native Workload Design</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#zero-touch-automation">Zero-Touch Automation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#upgrade-stages">Upgrade Stages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#key-benefits">Key Benefits</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-introduction.html">Introduction to the Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#git-server">Git Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#container-registry">Container Registry</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#openshift-hub-cluster">OpenShift Hub Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#webserver">HTTP Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#s3-storage">S3 Storage Server</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="preparing-ztp-pipeline.html">Preparing the ZTP GitOps Pipeline</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#introduction-to-clusterinstance">Introduction to the ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#git-repository">Git Repository</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#deploying-ztp-gitops-pipeline">Deploying the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html">Crafting the Telco Core Reference Design Specification</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-common-policies">Crafting Common Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-group-policies">Crafting Group Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-site-policies">Crafting Site Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#adding-custom-policies">Adding Custom Content</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-testing-policies">Crafting Testing Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#configure-kustomization-for-policies">Configure Kustomization for Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#deploying-policies-using-gitops-pipeline">Deploying the Telco Core RDS using the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html">Deploying an Agent Based Install Cluster</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#baremetal-node-details">Bare Metal Node Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#pre-reqs">Deployment Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#clusterinstance">ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#reference-manifest-clusterinstance">Reference Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#extra-manifest-clusterinstance">Extra Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#preparing-installation">Get Ready for the Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#deploying-mno-using-gitops-pipeline">Deploying the OpenShift Cluster using the ZTP GitOps Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment">Monitoring the Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment-webui">Monitoring the Deployment via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html#monitoring-deployment-cli">Monitoring the Deployment via the CLI</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="check-deployment-is-finished.html">Check MNO Deployment is finished</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-webui">Check MNO Deployment has Finished via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-cli">Check MNO Deployment has Finished via the CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html">Fast MNO Upgrade — Policy Preparation</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#verify-prereqs">Verifying the Starting State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#reference-crs-dir">Setting Up the Reference CRs Directory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#custom-manifest-mcp-worker-0">Custom Manifest for MCP workers</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policies-19">Creating the 4.18 to 4.19 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-prep-19">Policy: core-upgrade-prep-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-ocp-19">Policy: core-upgrade-ocp-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-olm-19">Policy: core-upgrade-olm-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-validate-19">Policy: core-upgrade-validate-19</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policies-20">Creating the 4.19 to 4.20 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-prep-20">Policy: core-upgrade-prep-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-ocp-20">Policy: core-upgrade-ocp-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-olm-20">Policy: core-upgrade-olm-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-validate-20">Policy: core-upgrade-validate-20</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#worker-upgrade-policies">Defining the Worker Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policygen-finish">Creating the PolicyGenerator for Worker Zone Upgrade</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#placement-binding">Placement and Binding the Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#kustomization-all">Updating kustomization.yaml With The Three PolicyGenerators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#git-push-all">Committing and Pushing The Upgrade Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#validation-policygenerators">Validating the PolicyGenerators</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html">Fast MNO Upgrade — Execution</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#introduction">Executing the Full EUS-to-EUS Upgrade with TALM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgus">Defining the CGU Orchestration Chain</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-19">CGU: fast-upgrade-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-20">CGU: fast-upgrade-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-workers">CGU: fast-upgrade-workers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-finish">CGU: fast-upgrade-finish</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#trigger-upgrade">Triggering the Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage1">Monitoring — 4.18 to 4.19 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage2">Monitoring — 4.19 to 4.20 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage3">Monitoring — Worker Zone Upgrades</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-complete">Upgrade Complete</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html">Troubleshooting Tips</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html#verification-lab">Verification of the lab status</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#containerized-infra">Containerized Infrastructure Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#sno-vms">SNO Virtual Machines</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#hub">Hub cluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#dns">DNS resolution</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-blank">Policies not showing in the Governance console</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-not-applied">Policies not applied</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="common-pitfalls.html">Common Pitfalls</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#exec-probes-cpu-pinning">Exec Probes and CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#energy-saving-hw-profiles">Energy Saving Hardware Profiles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#secure-boot-oot-unsigned-drivers">Secure Boot and Unsigned OoT Drivers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#sriov-node-drain">SR-IOV Node Drain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#pod-disruption-budgets">Pod Disruption Budgets</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="closing-thoughts.html">Closing Thoughts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html">Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#playbook-run-role">The Playbook</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-tasks-overview">Pre-Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#i#what-preworkload-does">What Pre-Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#key-services-deployed">Key Services Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#workload-tasks-overview">Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#what-workload-does">What Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-key-components">Key Components Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-deployment">Deployment Phases</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#next-steps">Next Steps</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#delete-environment">Delete The Environment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="welcome.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="fast-mno-upgrades.html">Fast MNO Upgrades</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/RHsyseng/5g-core-deployments-on-ocp-lab/edit/lab-4.20/documentation/modules/ROOT/pages/fast-mno-upgrades.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Fast MNO Upgrades</h1>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Performing OpenShift upgrades on large, multi-node (MNO) clusters is a challenging operation. Traditional upgrade approaches apply changes node by node in a serial fashion, meaning a single cluster with dozens of worker nodes can take many hours or even days to complete an upgrade. For environments running critical Telco workloads, this is simply not acceptable.</p>
+</div>
+<div class="paragraph">
+<p>The <strong>Fast MNO Upgrade</strong> methodology addresses this problem head-on. By combining a carefully designed cluster architecture, cloud-native workload patterns, and end-to-end automation, it achieves upgrades up to <strong>three times faster</strong> than traditional serial approaches, all while maintaining high availability for the applications running on the cluster.</p>
+</div>
+<div class="paragraph">
+<p>This section explains the concepts and design decisions behind the Fast MNO Upgrade approach. Understanding this theory is essential before performing the hands-on upgrade lab that follows.</p>
+</div>
+<div class="paragraph">
+<p>The methodology rests on three core pillars:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Resilient Cluster Architecture</strong> — partitioning the cluster into failure domains that can be upgraded in parallel.</p>
+</li>
+<li>
+<p><strong>Cloud-native Workload Design</strong> — ensuring applications tolerate a zone going offline without violating their availability contracts.</p>
+</li>
+<li>
+<p><strong>Zero-Touch Automation</strong> — orchestrating the full end-to-end procedure using ACM and TALM with no manual intervention.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="what-is-fast-mno-upgrade"><a class="anchor" href="#what-is-fast-mno-upgrade"></a>What Is a Fast MNO Upgrade?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Fast MNO Upgrade is an automated execution of an Extended Update Support (EUS) to EUS upgrade on a multi-node OpenShift cluster. The example used throughout this lab upgrades a cluster from <strong>4.18</strong> to <strong>4.20</strong>.</p>
+</div>
+<div class="sect2">
+<h3 id="control-plane-first"><a class="anchor" href="#control-plane-first"></a>Control Plane First</h3>
+<div class="paragraph">
+<p>The key technique that makes this methodology fast is the <strong>Control Plane First</strong> approach, also known as a <strong>Control Plane Only</strong> upgrade. The upgrade is split into two distinct phases:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Control Plane Phase</strong> — The control plane nodes are upgraded sequentially through every required intermediate version (4.18 → 4.19 → 4.20). During this entire phase, the worker nodes remain on the original version and continue serving the workload without any interruption.</p>
+</li>
+<li>
+<p><strong>Worker Phase</strong> — Once the control plane is fully upgraded to the final target version, all worker nodes are upgraded. Thanks to the architecture described in the following sections, entire groups of worker nodes are rebooted simultaneously rather than one by one.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This approach is safe and fully supported. The <a href="https://kubernetes.io/releases/version-skew-policy/">Kubernetes version skew policy</a> allows worker nodes to be up to two minor versions behind the control plane, which is exactly what makes it possible to pin workers at 4.18 while the control plane moves ahead to 4.20.</p>
+</div>
+<div class="paragraph">
+<p>The immediate result is that each worker node reboots exactly <strong>once</strong> during the entire operation, instead of twice (once for the intermediate version and once for the final version) as would happen in a standard sequential upgrade.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="eus-upgrade-diagram"><a class="anchor" href="#eus-upgrade-diagram"></a>EUS-to-EUS Upgrade Flow</h3>
+<div class="paragraph">
+<p>The following diagram shows how the two phases relate to each other. Worker MachineConfigPools (MCPs) are paused during the control plane phase and then unpaused sequentially, one zone at a time, during the worker phase.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Phase 1: Control Plane Only
+─────────────────────────────────────────────────────────
+  Masters:   4.18 ──► 4.19 ──► 4.20    (sequential)
+  Workers:   4.18     4.18     4.18    (paused, no change)
+─────────────────────────────────────────────────────────
+
+Phase 2: Worker Zone Upgrade  (one zone at a time)
+─────────────────────────────────────────────────────────
+  Zone 0:    4.18 ──────────────────► 4.20  (parallel reboot)
+  Zone 1:         4.18 ─────────────► 4.20  (parallel reboot)
+  Zone 2:              4.18 ─────────► 4.20  (parallel reboot)
+─────────────────────────────────────────────────────────</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pillar-1-architecture"><a class="anchor" href="#pillar-1-architecture"></a>Pillar 1: Resilient Cluster Architecture</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The first and most important pillar is the cluster&#8217;s physical and logical structure. The goal is to transform the upgrade from a slow serial operation into a fast parallel one by grouping nodes into <strong>upgrade units</strong> that map to Kubernetes <strong>failure domains</strong>.</p>
+</div>
+<div class="sect2">
+<h3 id="mcps-as-upgrade-units"><a class="anchor" href="#mcps-as-upgrade-units"></a>MachineConfigPools as Upgrade Units</h3>
+<div class="paragraph">
+<p>An OpenShift <a href="https://docs.openshift.com/container-platform/4.20/post_installation_configuration/machine-configuration-tasks.html#understanding-the-machine-config-operator">MachineConfigPool (MCP)</a> is the logical unit used to group worker nodes that share the same configuration and lifecycle. In the Fast MNO Upgrade methodology, a custom MCP is created for each <strong>failure domain</strong>, so that the Machine Config Operator (MCO) can upgrade all nodes within a zone at the same time.</p>
+</div>
+<div class="paragraph">
+<p>Two specific MCP settings are critical to this methodology:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>maxUnavailable: "100%"</code> — Instructs the MCO to drain and reboot all nodes in the MCP simultaneously instead of one at a time. This is safe because the MCP only covers a small fraction of the total cluster capacity (e.g., ~33% with 3 zones).</p>
+</li>
+<li>
+<p><code>paused: true</code> — Prevents the worker nodes from receiving any machine config changes while the control plane upgrade is in progress. Workers are only unpaused when it is their turn to be upgraded.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  name: worker-0
+  labels:
+    machineconfiguration.openshift.io/role: worker-0
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values: [ worker, worker-0 ]
+  paused: true          <i class="conum" data-value="1"></i><b>(1)</b>
+  maxUnavailable: 100%  <i class="conum" data-value="2"></i><b>(2)</b>
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-0: ""</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Keeps worker nodes frozen during the control plane upgrade phase.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Allows all nodes in this MCP to reboot at the same time during the worker phase.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The default <code>worker</code> MCP must be left empty. All worker nodes should be assigned exclusively to custom MCPs (one per failure domain). If nodes remain in the default <code>worker</code> MCP, those nodes will begin upgrading as soon as the control plane upgrade completes, bypassing the controlled sequencing.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="failure-domains"><a class="anchor" href="#failure-domains"></a>Kubernetes Failure Domains</h3>
+<div class="paragraph">
+<p>While MCPs handle the upgrade orchestration, the Kubernetes scheduler needs to know which nodes belong to the same failure domain so that it can spread application pods across zones. This is done by labeling each node with the standard Kubernetes topology label:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">topology.kubernetes.io/zone=&lt;zone-name&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When pods are scheduled on a cluster with this label, the scheduler automatically distributes replicas across different zones using a best-effort topology spread. This means that if one entire zone is taken offline for an upgrade, the pods from that zone have a natural landing place in the remaining zones.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The <code>topology.kubernetes.io/zone</code> label must be present on nodes <strong>before</strong> workload pods are first scheduled. Labels applied after pods are already running will only take effect when those pods are rescheduled.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="spare-capacity"><a class="anchor" href="#spare-capacity"></a>The Spare Capacity Rule</h3>
+<div class="paragraph">
+<p>The parallel upgrade strategy only works if the cluster has enough <strong>spare capacity</strong> to absorb the workload from the zone being upgraded. The rule is simple:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Total Workload &lt; (Total Cluster Capacity − Capacity of 1 Failure Domain)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In a cluster with 3 equally-sized failure domains, each zone represents ~33% of the total capacity. The spare capacity rule therefore means the total workload must consume less than <strong>~66%</strong> of the cluster&#8217;s allocatable resources.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Spare capacity calculation example</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Number of failure domains</th>
+<th class="tableblock halign-left valign-top">Size of one zone</th>
+<th class="tableblock halign-left valign-top">Maximum workload %</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">33%</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">66%</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">25%</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">75%</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">20%</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">80%</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10%</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">90%</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+More failure domains means a smaller percentage is taken offline at once, which allows a higher workload density. The trade-off is more sequential steps (and more CGUs) during the worker upgrade phase.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="cluster-partition-diagram"><a class="anchor" href="#cluster-partition-diagram"></a>Cluster Partitioning Overview</h3>
+<div class="paragraph">
+<p>The following diagram illustrates how a 9-worker-node cluster is partitioned into 3 MCPs, each corresponding to one Kubernetes failure domain.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/fast-mno-upgrades-cluster-partitioning.png" alt="Cluster Partitioning Overview">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pillar-2-workload"><a class="anchor" href="#pillar-2-workload"></a>Pillar 2: Cloud-native Workload Design</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The architecture alone is not enough. The workloads running on the cluster must also be designed to tolerate the temporary loss of an entire failure domain. This is what the second pillar addresses.</p>
+</div>
+<div class="sect2">
+<h3 id="pod-disruption-budgets"><a class="anchor" href="#pod-disruption-budgets"></a>PodDisruptionBudgets</h3>
+<div class="paragraph">
+<p>A <a href="https://kubernetes.io/docs/tasks/run-application/configure-pdb/">PodDisruptionBudget (PDB)</a> is a Kubernetes resource that defines the maximum disruption an application can tolerate during voluntary disruptions — such as a node drain during an upgrade. The MCO respects PDBs and will not force-drain a node if doing so would violate the budget.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: stress-app-pdb
+  namespace: workload-demo
+spec:
+  maxUnavailable: 3     <i class="conum" data-value="1"></i><b>(1)</b>
+  selector:
+    matchLabels:
+      app: stress-app</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>No more than 3 replicas of this application may be unavailable at the same time.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The <code>maxUnavailable</code> value in the PDB has a direct impact on the upgrade design: it determines the <strong>maximum number of replicas</strong> that can be co-located in a single failure domain. Placing more replicas than <code>maxUnavailable</code> in the same zone would cause the MCO to be unable to drain all nodes in that zone simultaneously, serializing the reboot and defeating the purpose of the parallel upgrade.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+If you have an application with <code>maxUnavailable: 1</code>, you must ensure that no more than 1 replica is scheduled per failure domain. Exceeding this will cause the upgrade to serialize node reboots within the MCP, slowing down the process.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="even-distribution"><a class="anchor" href="#even-distribution"></a>Even Pod Distribution</h3>
+<div class="paragraph">
+<p>For the parallel upgrade to work as designed, application pods must be distributed as evenly as possible across failure domains. The Kubernetes scheduler does this automatically using a best-effort topology spread based on the <code>topology.kubernetes.io/zone</code> labels.</p>
+</div>
+<div class="paragraph">
+<p>However, system components (such as Prometheus, Thanos, or the OpenShift Router) may not always be evenly distributed, especially if zone labels were added after the cluster was installed. The <a href="https://github.com/imiller0/pdbCheck"><code>pdbCheck</code></a> community utility can identify these imbalances and help resolve them before the upgrade begins by simulating the drain of each zone and reporting any PDB violations.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<a href="https://github.com/imiller0/pdbCheck"><code>pdbCheck</code></a> is a community tool developed by Red Hat engineering. It is not an officially supported Red Hat product and is provided as-is. It is a helpful pre-upgrade diagnostic aid.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="resource-sizing"><a class="anchor" href="#resource-sizing"></a>Resource Sizing for Spare Capacity</h3>
+<div class="paragraph">
+<p>The workload&#8217;s resource requests must respect the spare capacity rule described in <a href="#spare-capacity">The Spare Capacity Rule</a>. In practice, the sizing is derived as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Determine the application&#8217;s PDB <code>maxUnavailable</code> value — this caps how many replicas can be in any single zone.</p>
+</li>
+<li>
+<p>Calculate the total allocatable cluster capacity (accounting for OS and platform overhead, typically 10–15%).</p>
+</li>
+<li>
+<p>Ensure the total resource requests of all replicas fit within the capacity of the remaining zones when one zone is taken offline.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>For example, in a cluster where one zone represents ~33% of capacity, the total workload must not exceed ~66% of the cluster&#8217;s allocatable CPU and memory.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pillar-3-automation"><a class="anchor" href="#pillar-3-automation"></a>Pillar 3: Zero-Touch Automation with ACM and TALM</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The third pillar converts the upgrade from a complex, error-prone manual operation into a fully automated, reproducible process. Red Hat Advanced Cluster Management (ACM) and the Topology Aware Lifecycle Manager (TALM) operator are the two tools that make this possible.</p>
+</div>
+<div class="sect2">
+<h3 id="acm-policies"><a class="anchor" href="#acm-policies"></a>ACM Policies</h3>
+<div class="paragraph">
+<p>Every discrete action in the upgrade process is defined as an <a href="https://access.redhat.com/documentation/en-us/red_hat_advanced_cluster_management_for_kubernetes/2.12/html/governance/governance">ACM Policy</a>. A policy is a declarative definition of the desired state for a specific Kubernetes resource on the managed spoke cluster. For a detailed explanation of the ACM Policy framework and how policies work in this lab, refer to the <a href="rhacm-policies.html#policy-framework" class="xref page">RHACM Governance Policy Framework</a> section. Examples of upgrade policies include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>core-upgrade-prep-19</code> — Updates the OLM CatalogSource to point to the v4.19 operator index and pauses all worker MCPs.</p>
+</li>
+<li>
+<p><code>core-upgrade-ocp-19</code> — Sets the <code>ClusterVersion</code> desired update to 4.19, triggering the control plane upgrade.</p>
+</li>
+<li>
+<p><code>core-upgrade-olm-19</code> — Updates all OLM operators to their 4.19-compatible versions.</p>
+</li>
+<li>
+<p><code>core-upgrade-validate-19</code> — Verifies that the upgrade to 4.19 completed successfully.</p>
+</li>
+<li>
+<p>(Equivalent set of policies exists for 4.20.)</p>
+</li>
+<li>
+<p><code>core-upgrade-workers-0</code> through <code>core-upgrade-workers-2</code> — Unpauses each worker MCP in turn to trigger the parallel worker node upgrade.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>All policies are created in <code>remediationAction: inform</code> mode. In this state, ACM monitors the cluster and reports compliance, but does not make any changes. This allows all policies to be pre-created and validated before the upgrade window begins, and then activated in a controlled, sequenced manner by TALM.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="talm-orchestration"><a class="anchor" href="#talm-orchestration"></a>TALM and ClusterGroupUpgrade Orchestration</h3>
+<div class="paragraph">
+<p><a href="https://docs.openshift.com/container-platform/4.20/edge_computing/cnf-talm-for-cluster-updates.html">TALM</a> manages the lifecycle of the upgrade by processing a series of <code>ClusterGroupUpgrade</code> (CGU) custom resources. A CGU references one or more ACM policies and moves them from <code>inform</code> to <code>enforce</code> on the target cluster, causing ACM to apply the desired state. For a detailed explanation of TALM and how it works in this lab, refer to the <a href="talm.html#talm" class="xref page">Topology Aware Lifecycle Manager (TALM)</a> section.</p>
+</div>
+<div class="paragraph">
+<p>The <code>blockingCRs</code> field in a CGU creates an explicit dependency between stages: a CGU will not start until all CGUs listed in its <code>blockingCRs</code> have completed successfully. This is the mechanism that enforces the correct ordering of the upgrade stages.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: ran.openshift.io/v1alpha1
+kind: ClusterGroupUpgrade
+metadata:
+  name: core-upgrade-ocp-19
+  namespace: ztp-install
+spec:
+  blockingCRs:                    <i class="conum" data-value="1"></i><b>(1)</b>
+  - name: core-upgrade-prep-19
+    namespace: ztp-install
+  clusters:
+  - cnf77
+  enable: true
+  managedPolicies:
+  - core-upgrade-ocp-19
+  remediationStrategy:
+    maxConcurrency: 1
+    timeout: 240</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This CGU will not start until <code>core-upgrade-prep-19</code> has completed.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="upgrade-stages"><a class="anchor" href="#upgrade-stages"></a>End-to-End Upgrade Stage Sequence</h3>
+<div class="paragraph">
+<p>The full EUS-to-EUS upgrade is broken down into a series of CGUs that execute in the following sequence:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. EUS-to-EUS upgrade stage sequence</caption>
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 50.0001%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Stage</th>
+<th class="tableblock halign-left valign-top">CGU name</th>
+<th class="tableblock halign-left valign-top">What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-prep-19</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pauses all worker MCPs, sets <code>maxUnavailable: 100%</code>, updates CatalogSource to 4.19</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-ocp-19</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Upgrades OCP control plane from 4.18 to 4.19</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-olm-19</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Updates all OLM operators to 4.19-compatible versions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-validate-19</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates control plane is healthy and operators are running at 4.19</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-prep-20</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Updates CatalogSource to 4.20</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-ocp-20</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Upgrades OCP control plane from 4.19 to 4.20</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-olm-20</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Updates all OLM operators to 4.20-compatible versions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-validate-20</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates control plane is healthy at 4.20</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">9–11</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>core-upgrade-workers-0/1/2</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequentially unpauses each of the 3 worker MCPs, triggering parallel reboot of all nodes in that zone</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Each stage blocks on the previous one via <code>blockingCRs</code>, ensuring the upgrade proceeds in the correct order and that no stage starts unless the prior one has been verified as complete.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="key-benefits"><a class="anchor" href="#key-benefits"></a>Key Benefits</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Fast MNO Upgrade methodology delivers the following measurable advantages over traditional approaches:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>3x faster upgrade times</strong> — Parallel zone reboots and the control plane first strategy dramatically reduce the total upgrade window.</p>
+</li>
+<li>
+<p><strong>Single reboot per worker node</strong> — Each worker node reboots only once for the entire 4.18 to 4.20 upgrade, instead of once per intermediate version.</p>
+</li>
+<li>
+<p><strong>High availability maintained</strong> — PDBs and spare capacity planning ensure the workload continues to serve traffic throughout the upgrade. No PDB violations occur.</p>
+</li>
+<li>
+<p><strong>Zero manual intervention</strong> — The entire process from preparation to validation is driven by ACM Policies and TALM CGUs, making it repeatable and auditable.</p>
+</li>
+<li>
+<p><strong>Scalable to large fleets</strong> — Because the process is fully declarative and Git-driven, the same set of policies and CGUs can be applied to hundreds of clusters simultaneously using ACM&#8217;s fleet management capabilities.</p>
+</li>
+<li>
+<p><strong>Works under realistic load</strong> — The methodology is designed and validated with clusters running at approximately 70% resource utilization, reflecting real production environments.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In the hands-on section that follows, you will apply this methodology directly on a live MNO cluster managed by ACM and TALM, observing each stage as it completes.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="deployment-considerations.html">Deployment Considerations</a></span>
+  <span class="next"><a href="lab-environment-introduction.html">Introduction to the Lab Environment</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

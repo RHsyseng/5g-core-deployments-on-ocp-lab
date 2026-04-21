@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Deploying an Agent Based Install Cluster :: LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</title>
+    <link rel="canonical" href="https://labs.sysdeseng.com/4.20/installing-agentbasedinstall-cluster.html">
+    <link rel="prev" href="crafting-cluster-telco-related-infra-operators-configs.html">
+    <link rel="next" href="check-deployment-is-finished.html">
+    <meta name="generator" content="Antora 3.0.0">
+    <link rel="stylesheet" href="../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com/en/solutions/telecommunications" target="_blank"><img src="../_/img/Logo-Red_Hat-A-Reverse-RGB.png" height="40px" alt="Red Hat Telco Solutions"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="https://labs.sysdeseng.com">LAB - 5G CORE RDS Deployments and Fast Upgrades on OpenShift</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://developers.redhat.com/ebooks/" target="_blank">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/kubernetes-tutorial/" target="_blank">Kubernetes</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/istio-tutorial/" target="_blank">Istio</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/quarkus-tutorial/" target="_blank">Quarkus</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/knative-tutorial/" target="_blank">Knative</a>
+            <a class="navbar-item" href="https://redhat-developer-demos.github.io/tekton-tutorial/" target="_blank">Tekton</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="4.20" data-version="">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="welcome.html"></a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html">Welcome</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="welcome.html#showroom-intro">Introduction to the Showroom Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#resizing-sections">Resizing App Sections</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#multiple-terminals">Opening Multiple Terminals</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="welcome.html#web-browser">Web Browser</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#current-contributors">Current Contributors</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="welcome.html#past-contributors">Past Contributors</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="introduction.html">Introduction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-aim">Who Is This Lab Aimed At?</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#what-you-will-achieve">What You Will Achieve</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="introduction.html#lab-software-versions">Lab Software Versions</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="acronyms.html">Acronyms used in the lab</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="5g-core-context.html">5G Core Context</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#mcp">MachineConfigPools</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#zones">Zones and Topology Spread</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#numa-nodes">NUMA Nodes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#huge-pages">Huge Pages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#cpu-pinning">CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#irq-load-balancing">IRQ Load Balancing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dpdk">DPDK</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#sriov">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#dual-stack-networking">Dual-stack Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#storage">Persistent Storage</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="5g-core-context.html#service-mesh">Service Mesh</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="mno-intro.html">Introduction to Multi-Node OpenShift (MNO)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#telco-core-topology">Telco Core Cluster Topology</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#differences-from-standard-ocp">Differences from a Standard OCP Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#mno-requirements">Minimum Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#installation-methods">Installation Methods</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="mno-intro.html#extra-information">Extra Information</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="telco-related-infra-operators-intro.html">Introduction to Telco Related Infrastructure Operators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#node-tuning-operator">Node Tuning Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#sriov-operator">SR-IOV Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#ptp-operator">PTP Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#accelerators-operators">Accelerators Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cluster-logging-operator">Cluster Logging Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#lifecycle-operator">Lifecycle Agent Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#storage-operator">Storage Operators</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#oadp-operator">OpenShift API for Data Protection Operator</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="telco-related-infra-operators-intro.html#cert-manager-operator">Cert-Manager Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-intro.html">Introduction to Zero Touch Provisioning (ZTP)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-intro.html#what-is-ztp">What is ZTP?</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html">OpenShift GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ocp-gitops.html#gitops">GitOps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-principles">GitOps Principles</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#gitops-patterns-ocp">GitOps Patterns on OpenShift</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#directories-vs-branches">Directories vs Branches</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#direct-commit-to-main">Direct commit to main</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ocp-gitops.html#prs-review-cycles">Pull Requests and review cycles</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ocp-gitops.html#gitops-ocp">GitOps on OpenShift</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html">Hub Management Components</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#rhacm">Red Hat Advanced Cluster Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#mce">Multicluster Engine</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#ai">Infrastructure Operator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-at-scale.html#gitops-operator">GitOps Operator</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#sitegen">SiteGen</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="ztp-at-scale.html#policygen">PolicyGen</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-at-scale.html#talm">Topology Aware Lifecycle Manager</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="ztp-workflow.html">ZTP Workflow</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#deployment-methods">Multi-Node OpenShift Deployments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#ztp-policies">Deployment Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ztp-workflow.html#takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html">RHACM Governance Policy Framework</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#policy-framework">Policy Framework</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="rhacm-policies.html#policies">Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-status">Policy Status</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="rhacm-policies.html#policy-remediation">Policy Remediation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rhacm-policies.html#rhacm-policies-takeaways">Takeaways</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="managing-at-scale.html">Managing at Scale</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#inform-policies">Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#olm-subscriptions">OLM Subscriptions</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="managing-at-scale.html#cluster-policies">Cluster Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html">Topology Aware Lifecycle Manager (TALM)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#inform-policies">Default Inform Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="talm.html#cgu">Cluster Group Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="talm.html#autocreation-cgu">Auto Creation of CGUs</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#phase-labels">Phase labels</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="talm.html#waves">Policy Waves</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html">PolicyGen Deepdive</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policygen-deepdive.html#policygen-implementation">PolicyGen Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#kustomize-plugins">Kustomize Plugins</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#policy-generator">Policy Generator</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#telco-core-profile">Telco Core Profile</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#cpu-partitioning">CPU Partitioning and Performance Tuning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#schedulable-cp">Workloads on Schedulable Control Planes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#node-configuration">Node Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#service-mesh">Service Mesh</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#cno">Cluster Network Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#metallb">Load Balancer (MetalLB)</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#sr-iov-core">SR-IOV</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#nmstate">NMState Operator</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#logging-core">Log Collector and Forwarder</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#numa-scheduling">NUMA-Aware Scheduling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#security-core">Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#disconnected-core">Disconnected Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="policygen-deepdive.html#kustomize-plugins-locally">Running Kustomize Plugins Locally</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html">Deployment Considerations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#hardware-configurations">Hardware configurations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#bios-settings">BIOS Settings</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#networking">Networking</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="deployment-considerations.html#disconnected-environments">Disconnected Environments</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#connected-proxy">Connected through proxy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="deployment-considerations.html#fully-disconnected">Fully disconnected</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="deployment-considerations.html#git-repo-structure">Git Repository Structure</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-upgrades.html">Fast MNO Upgrades</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#prerequisites">Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#resilient-cluster-architecture">Resilient Cluster Architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#cloud-native-workload-design">Cloud-native Workload Design</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#zero-touch-automation">Zero-Touch Automation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#upgrade-stages">Upgrade Stages</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-upgrades.html#key-benefits">Key Benefits</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-introduction.html">Introduction to the Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#git-server">Git Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#container-registry">Container Registry</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#openshift-hub-cluster">OpenShift Hub Cluster</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#webserver">HTTP Server</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-introduction.html#s3-storage">S3 Storage Server</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="preparing-ztp-pipeline.html">Preparing the ZTP GitOps Pipeline</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#introduction-to-clusterinstance">Introduction to the ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#git-repository">Git Repository</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="preparing-ztp-pipeline.html#deploying-ztp-gitops-pipeline">Deploying the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html">Crafting the Telco Core Reference Design Specification</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-common-policies">Crafting Common Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-group-policies">Crafting Group Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-site-policies">Crafting Site Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#adding-custom-policies">Adding Custom Content</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#crafting-testing-policies">Crafting Testing Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#configure-kustomization-for-policies">Configure Kustomization for Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="crafting-cluster-telco-related-infra-operators-configs.html#deploying-policies-using-gitops-pipeline">Deploying the Telco Core RDS using the ZTP GitOps Pipeline</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="installing-agentbasedinstall-cluster.html">Deploying an Agent Based Install Cluster</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#baremetal-node-details">Bare Metal Node Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#pre-reqs">Deployment Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#clusterinstance">ClusterInstance</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#reference-manifest-clusterinstance">Reference Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#extra-manifest-clusterinstance">Extra Manifest Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#preparing-installation">Get Ready for the Installation</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#deploying-mno-using-gitops-pipeline">Deploying the OpenShift Cluster using the ZTP GitOps Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#monitoring-deployment">Monitoring the Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#monitoring-deployment-webui">Monitoring the Deployment via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#monitoring-deployment-cli">Monitoring the Deployment via the CLI</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="check-deployment-is-finished.html">Check MNO Deployment is finished</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-webui">Check MNO Deployment has Finished via the WebUI</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="check-deployment-is-finished.html#check-mno-deployment-cli">Check MNO Deployment has Finished via the CLI</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html">Fast MNO Upgrade — Policy Preparation</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#introduction">Introduction</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#verify-prereqs">Verifying the Starting State</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#reference-crs-dir">Setting Up the Reference CRs Directory</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#custom-manifest-mcp-worker-0">Custom Manifest for MCP workers</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policies-19">Creating the 4.18 to 4.19 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-prep-19">Policy: core-upgrade-prep-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-ocp-19">Policy: core-upgrade-ocp-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-olm-19">Policy: core-upgrade-olm-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-validate-19">Policy: core-upgrade-validate-19</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policies-20">Creating the 4.19 to 4.20 Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-prep-20">Policy: core-upgrade-prep-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-ocp-20">Policy: core-upgrade-ocp-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-olm-20">Policy: core-upgrade-olm-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policy-core-upgrade-validate-20">Policy: core-upgrade-validate-20</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#worker-upgrade-policies">Defining the Worker Upgrade Policies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#policygen-finish">Creating the PolicyGenerator for Worker Zone Upgrade</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#placement-binding">Placement and Binding the Policies</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-policy-preparation.html#kustomization-all">Updating kustomization.yaml With The Three PolicyGenerators</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#git-push-all">Committing and Pushing The Upgrade Policies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-policy-preparation.html#validation-policygenerators">Validating the PolicyGenerators</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html">Fast MNO Upgrade — Execution</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#introduction">Executing the Full EUS-to-EUS Upgrade with TALM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgus">Defining the CGU Orchestration Chain</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-19">CGU: fast-upgrade-19</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-20">CGU: fast-upgrade-20</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-workers">CGU: fast-upgrade-workers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#cgu-finish">CGU: fast-upgrade-finish</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="fast-mno-cgu-execution.html#trigger-upgrade">Triggering the Upgrade</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage1">Monitoring — 4.18 to 4.19 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage2">Monitoring — 4.19 to 4.20 Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-stage3">Monitoring — Worker Zone Upgrades</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="fast-mno-cgu-execution.html#monitor-complete">Upgrade Complete</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html">Troubleshooting Tips</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="troubleshooting-tips.html#verification-lab">Verification of the lab status</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#containerized-infra">Containerized Infrastructure Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#sno-vms">SNO Virtual Machines</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#hub">Hub cluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting-tips.html#dns">DNS resolution</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-blank">Policies not showing in the Governance console</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="troubleshooting-tips.html#policies-not-applied">Policies not applied</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="common-pitfalls.html">Common Pitfalls</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#exec-probes-cpu-pinning">Exec Probes and CPU Pinning</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#energy-saving-hw-profiles">Energy Saving Hardware Profiles</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#secure-boot-oot-unsigned-drivers">Secure Boot and Unsigned OoT Drivers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#sriov-node-drain">SR-IOV Node Drain</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="common-pitfalls.html#pod-disruption-budgets">Pod Disruption Budgets</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="closing-thoughts.html">Closing Thoughts</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html">Lab Environment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#playbook-run-role">The Playbook</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-tasks-overview">Pre-Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#i#what-preworkload-does">What Pre-Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#key-services-deployed">Key Services Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#preworkload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="lab-environment-ansible.html#workload-tasks-overview">Workload Tasks</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#what-workload-does">What Workload Does</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-key-components">Key Components Deployed</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-deployment">Deployment Phases</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-troubleshooting">Troubleshooting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lab-environment-ansible.html#workload-time">Time Requirements</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#next-steps">Next Steps</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lab-environment-ansible.html#delete-environment">Delete The Environment</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="welcome.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="installing-agentbasedinstall-cluster.html">Deploying an Agent Based Install Cluster</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/RHsyseng/5g-core-deployments-on-ocp-lab/edit/lab-4.20/documentation/modules/ROOT/pages/installing-agentbasedinstall-cluster.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Deploying an Agent Based Install Cluster</h1>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As detailed in the <a href="ztp-workflow.html#abi-deployment">Agent Based Installation</a> section, this installation method combines the ease of use of the Assisted Installation service with the ability to run offline. It also optionally generates or accepts <a href="ztp-intro.html">Zero Touch Provisioning</a> (ZTP) custom resources. In this part of the lab, we will:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Create the prerequisites for the OpenShift cluster installation.</p>
+</li>
+<li>
+<p>Define the OpenShift cluster as a <code>ClusterInstance</code> CR.</p>
+</li>
+<li>
+<p>Include any extra configuration required for our telco 5G Core-specific use case.</p>
+</li>
+<li>
+<p>Commit all manifests into the <code>ztp-repository</code> Git repo, where the <a href="ztp-intro.html">OpenShift GitOps</a> operator automatically applies the changes.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="baremetal-node-details"><a class="anchor" href="#baremetal-node-details"></a>Bare Metal Node Details</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The details for our bare-metal nodes, which we want to provision as OpenShift Nodes, are as follows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>RedFish Endpoint: <code>redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-&lt;master/worker&gt;-&lt;node-number&gt;</code></p>
+</li>
+<li>
+<p>MAC Address: <code>aa:aa:aa:aa:XX:YY</code></p>
+</li>
+<li>
+<p>Primary disk: <code>/dev/vda</code></p>
+</li>
+<li>
+<p>BMC User: <code>admin</code></p>
+</li>
+<li>
+<p>BMC Password: <code>admin</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pre-reqs"><a class="anchor" href="#pre-reqs"></a>Deployment Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before working on the ClusterInstance, let&#8217;s add some information required for the deployment into the Git repository.</p>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+In a production environment, you should not add sensitive information in plain text to your Git repository. For simplicity in this lab, we are adding this information in plain text so you don&#8217;t have to manage it. This applies to items like pull secrets or BMC credentials.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>BMC credentials file.</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/pre-reqs/mno-cluster/bmc-credentials.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-master-00-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-master-01-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-master-02-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-00-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-01-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-02-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-10-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-11-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-12-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-20-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-21-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mno-cluster-worker-22-bmc-credentials
+  namespace: mno
+data:
+  username: "YWRtaW4="
+  password: "YWRtaW4="
+type: Opaque
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Pull secret for accessing the disconnected registry.</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/pre-reqs/mno-cluster/pull-secret.yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: disconnected-registry-pull-secret
+  namespace: mno
+stringData:
+  .dockerconfigjson: '{"auths":{"infra.5g-deployment.lab:8443":{"auth":"YWRtaW46cjNkaDR0MSE="}}}'
+type: kubernetes.io/dockerconfigjson
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Namespace for the OpenShift cluster.</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/pre-reqs/mno-cluster/ns.yaml
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mno
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Kustomization file for the OpenShift "MNO" cluster pre-reqs.</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/pre-reqs/mno-cluster/kustomization.yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - bmc-credentials.yaml
+  - pull-secret.yaml
+  - ns.yaml
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Kustomization file for the clusters pre-reqs.</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/pre-reqs/kustomization.yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - mno-cluster/
+EOF</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="clusterinstance"><a class="anchor" href="#clusterinstance"></a>ClusterInstance</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that we have the pre-reqs, let&#8217;s jump into the ClusterInstance.</p>
+</div>
+<div class="paragraph">
+<p>Copy the command below and refer to the comments in the code for explanations.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt; 'EOF' &gt; ~/5g-deployment-lab/ztp-repository/site-configs/hub-1/ocp-core-cluster.yaml
+---
+apiVersion: siteconfig.open-cluster-management.io/v1alpha1
+kind: ClusterInstance
+metadata:
+  name: "ocp-mno-cluster"
+  namespace: "mno"
+spec:
+  baseDomain: "5g-deployment.lab"
+  pullSecretRef:
+    name: "disconnected-registry-pull-secret"
+  clusterImageSetNameRef: "ocp-v4.18.33-disconnected"
+  sshPublicKey: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC5pFKFLOuxrd9Q/TRu9sRtwGg2PV+kl2MHzBIGUhCcR0LuBJk62XG9tQWPQYTQ3ZUBKb6pRTqPXg+cDu5FmcpTwAKzqgUb6ArnjECxLJzJvWieBJ7k45QzhlZPeiN2Omik5bo7uM/P1YIo5pTUdVk5wJjaMOb7Xkcmbjc7r22xY54cce2Wb7B1QDtLWJkq++eJHSX2GlEjfxSlEvQzTN7m2N5pmoZtaXpLKcbOqtuSQSVKC4XPgb57hgEs/ZZy/LbGGHZyLAW5Tqfk1JCTFGm6Q+oOd3wAOF1SdUxM7frdrN3UOB12u/E6YuAx3fDvoNZvcrCYEpjkfrsjU91oz78aETZV43hOK9NWCOhdX5djA7G35/EMn1ifanVoHG34GwNuzMdkb7KdYQUztvsXIC792E2XzWfginFZha6kORngokZ2DwrzFj3wgvmVyNXyEOqhwi6LmlsYdKxEvUtiYhdISvh2Y9GPrFcJ5DanXe7NVAKXe5CyERjBnxWktqAPBzXJa36FKIlkeVF5G+NWgufC6ZWkDCD98VZDiPP9sSgqZF8bSR4l4/vxxAW4knKIZv11VX77Sa1qZOR9Ml12t5pNGT7wDlSOiDqr5EWsEexga/2s/t9itvfzhcWKt+k66jd8tdws2dw6+8JYJeiBbU63HBjxCX+vCVZASrNBjiXhFw=="
+  clusterName: "mno"
+  networkType: "OVNKubernetes"
+  clusterType: HighlyAvailable
+  holdInstallation: false
+  extraManifestsRefs:
+    - name: core-rds-418-manifests
+    - name: core-418-custom-manifests
+  ignitionConfigOverride: '{"ignition":{"version":"3.2.0"},"storage":{"files":[{"path":"/etc/containers/policy.json","mode":420,"overwrite":true,"contents":{"source":"data:text/plain;charset=utf-8;base64,ewogICAgImRlZmF1bHQiOiBbCiAgICAgICAgewogICAgICAgICAgICAidHlwZSI6ICJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIgogICAgICAgIH0KICAgIF0sCiAgICAidHJhbnNwb3J0cyI6CiAgICAgICAgewogICAgICAgICAgICAiZG9ja2VyLWRhZW1vbiI6CiAgICAgICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAgICAgIiI6IFt7InR5cGUiOiJpbnNlY3VyZUFjY2VwdEFueXRoaW5nIn1dCiAgICAgICAgICAgICAgICB9CiAgICAgICAgfQp9"}}]}}'
+  extraLabels:
+    ManagedCluster:
+      common: "ocp418"
+      logicalGroup: "active"
+      rds: "core"
+      group-core: ""
+      core-site: "mno"
+      core-zone: "europe"
+      hardware-type: "hw-type-platform-1"
+  clusterNetwork:
+    - cidr: "10.128.0.0/14"
+      hostPrefix: 23
+    - cidr: fd01::/48
+      hostPrefix: 64
+  apiVIPs:
+    - 192.168.125.29
+    - 2620:52:0:1305::29
+  ingressVIPs:
+    - 192.168.125.28
+    - 2620:52:0:1305::28
+  serviceNetwork:
+    - cidr: "172.30.0.0/16"
+    - cidr: fd02::/112
+  machineNetwork:
+    - cidr: "192.168.125.0/24"
+    - cidr: 2620:52:0:1305::/64
+  additionalNTPSources:
+    - "clock.corp.redhat.com"
+  templateRefs:
+    - name: ai-cluster-templates-v1
+      namespace: open-cluster-management
+  nodes:
+    - hostName: "control-plane-0"
+      role: "master"
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-master-00"
+      bmcCredentialsName:
+        name: "mno-cluster-master-00-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:01"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:01"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.30
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::30
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "control-plane-1"
+      role: "master"
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-master-01"
+      bmcCredentialsName:
+        name: "mno-cluster-master-01-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:02"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:02"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.31
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::31
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "control-plane-2"
+      role: "master"
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-master-02"
+      bmcCredentialsName:
+        name: "mno-cluster-master-02-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:03"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:03"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.32
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::32
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-00"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-0: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-00"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-00-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:04"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:04"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.33
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::33
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-01"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-0: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-01"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-01-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:05"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:05"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.34
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::34
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-02"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-0: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-02"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-02-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:06"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:06"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.35
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::35
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-10"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-1: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-10"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-10-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:07"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:07"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.36
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::36
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-11"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-1: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-11"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-11-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:08"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:08"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.37
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::37
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-12"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-1: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-12"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-12-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:09"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:09"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.38
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::38
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-20"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-2: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-20"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-20-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:10"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:10"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.39
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::39
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-21"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-2: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-21"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-21-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:11"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:11"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.40
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::40
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+    - hostName: "worker-22"
+      role: "worker"
+      nodeLabels:
+        node-role.kubernetes.io/worker-2: ""
+      bmcAddress: "redfish-virtualmedia://192.168.125.1:9000/redfish/v1/Systems/local/ocp-mno-worker-22"
+      bmcCredentialsName:
+        name: "mno-cluster-worker-22-bmc-credentials"
+      bootMACAddress: "aa:aa:aa:aa:02:12"
+      bootMode: "UEFI"
+      rootDeviceHints:
+        deviceName: "/dev/vda"
+      nodeNetwork:
+        interfaces:
+        - macAddress: "aa:aa:aa:aa:02:12"
+          name: "enp3s0"
+        config:
+          interfaces:
+            - name: enp3s0
+              type: ethernet
+              state: up
+              ipv4:
+                address:
+                - ip: 192.168.125.41
+                  prefix-length: 24
+                enabled: true
+              ipv6:
+                enabled: true
+                dhcp: false
+                autoconf: false
+                address:
+                  - ip: 2620:52:0:1305::41
+                    prefix-length: 64
+          dns-resolver:
+            config:
+              server:
+              - 192.168.125.1
+              - 2620:52:0:1305::1
+          routes:
+            config:
+            - destination: 0.0.0.0/0
+              next-hop-interface: enp3s0
+              next-hop-address: 192.168.125.1
+              table-id: 254
+            - destination: ::/0
+              next-hop-interface: enp3s0
+              next-hop-address: 2620:52:0:1305::1
+      templateRefs:
+        - name: ai-node-templates-v1
+          namespace: open-cluster-management
+EOF</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Check that the above ClusterInstance CR is using the <code>ai-node-templates-v1</code> (Agent Based Install) templates to deploy the <code>mno</code> OpenShift cluster.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In our site, we defined <code>clusterImageSetNameRef: "ocp-v4.18.33-disconnected"</code> for the release to use to deploy our site. This reference points to the <code>active</code> release that we are deploying our sites with. Let&#8217;s create the <code>ClusterImageSet</code> in the repo:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/resources/ocp-418-33-imageset.yaml
+---
+apiVersion: hive.openshift.io/v1
+kind: ClusterImageSet
+metadata:
+  name: ocp-v4.18.33-disconnected
+spec:
+  releaseImage: infra.5g-deployment.lab:8443/openshift/release-images:4.18.33-x86_64
+EOF</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reference-manifest-clusterinstance"><a class="anchor" href="#reference-manifest-clusterinstance"></a>Reference Manifest Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#8217;s add the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/scalability_and_performance/telco-core-ref-design-specs#telco-core-reference-configuration-crs">reference Core configuration</a> for the version of OCP we are about to deploy. In the workstation, run the following command to extract the reference ZTP 4.20 Core configuration. These manifests are extracted from the <code>ztp-site-generate</code> container.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">podman login infra.5g-deployment.lab:8443 -u admin -p r3dh4t1! --tls-verify=false
+podman run --log-driver=none --rm --tls-verify=false infra.5g-deployment.lab:8443/openshift4/openshift-telco-core-rds-rhel9:v4.18.5-5 | base64 -d | tar x -C ~/5g-deployment-lab/ztp-repository/site-configs/install-manifests/4.18/extra-manifests/ --strip-components=3 telco-core-rds/install/extra-manifests/
+podman run --log-driver=none --rm --tls-verify=false infra.5g-deployment.lab:8443/openshift4/openshift-telco-core-rds-rhel9:v4.19.3-1 | base64 -d | tar x -C ~/5g-deployment-lab/ztp-repository/site-configs/install-manifests/4.19/extra-manifests/ --strip-components=3 telco-core-rds/install/extra-manifests/
+podman run --log-driver=none --rm --tls-verify=false infra.5g-deployment.lab:8443/openshift4/openshift-telco-core-rds-rhel9:v4.20.1-3 | base64 -d | tar x -C ~/5g-deployment-lab/ztp-repository/site-configs/install-manifests/4.20/extra-manifests/ --strip-components=3 telco-core-rds/install/extra-manifests/</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>reference-manifest/4.20/</code> refers to the Git subdirectory that stores the contents of the Core configuration for a specific version, in this case 4.20. Different versions of the Core configuration can coexist by extracting them from the appropriate <code>ztp-site-generate</code> container version to a different <code>extra-manifest</code> folder. Then, the user only needs to include the right <code>reference-manifest</code> version folder to the cluster version being installed.</p>
+</div>
+<div class="paragraph">
+<p>This configuration is applied during installation time.</p>
+</div>
+<div class="paragraph">
+<p>Our recommendation is to always create a reference and keep the reference and user defined manifests (see next section) separately. This makes later updates to the reference based on z-stream releases significantly easier (simply replace the contents of reference-manifests with updated content)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="extra-manifest-clusterinstance"><a class="anchor" href="#extra-manifest-clusterinstance"></a>Extra Manifest Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now, let&#8217;s add the <strong>extra</strong> or <strong>custom</strong> Core configuration to the cluster. In this case we are creating the required MachineConfigPools that enable our cluster to run <code>fast-upgrades</code> as discussed in the <a href="fast-mno-upgrades.html" class="xref page">Fast MNO Upgrades</a> section:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">for release in 4.18 4.19 4.20
+do
+cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/install-manifests/${release}/custom-manifests/fast-upgrades-mcps.yaml
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker-0
+  name: worker-0
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values:
+      - worker
+      - worker-0
+  maxUnavailable: 100%
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-0: ""
+  paused: false
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker-1
+  name: worker-1
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values:
+      - worker
+      - worker-1
+  maxUnavailable: 100%
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-1: ""
+  paused: false
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: worker-2
+  name: worker-2
+spec:
+  machineConfigSelector:
+    matchExpressions:
+    - key: machineconfiguration.openshift.io/role
+      operator: In
+      values:
+      - worker
+      - worker-2
+  maxUnavailable: 100%
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/worker-2: ""
+  paused: false
+EOF
+done</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="preparing-installation"><a class="anchor" href="#preparing-installation"></a>Get Ready for the Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Finally, we will add the kustomizations for the ClusterInstance. Note that the Reference Core and the extra-manifests configuration are included as a <code>ConfigMap</code> custom resource named <strong>core-rds-418-manifests</strong>.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/hub-1/kustomization.yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+generators:
+  - ocp-core-cluster.yaml
+EOF
+cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/resources/kustomization.yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ocp-418-33-imageset.yaml
+EOF
+cat &lt;&lt;EOF &gt; ~/5g-deployment-lab/ztp-repository/site-configs/kustomization.yaml
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - pre-reqs/
+  - resources/
+  - hub-1/ocp-core-cluster.yaml
+configMapGenerator:
+  - files:
+    - install-manifests/4.18/extra-manifests/control-plane-load-kernel-modules.yaml
+    - install-manifests/4.18/extra-manifests/kdump-master.yaml
+    - install-manifests/4.18/extra-manifests/kdump-worker.yaml
+    - install-manifests/4.18/extra-manifests/mc_rootless_pods_selinux.yaml
+    - install-manifests/4.18/extra-manifests/mount_namespace_config_master.yaml
+    - install-manifests/4.18/extra-manifests/mount_namespace_config_worker.yaml
+    - install-manifests/4.18/extra-manifests/sctp_module_mc.yaml
+    - install-manifests/4.18/extra-manifests/worker-load-kernel-modules.yaml
+    name: core-rds-418-manifests
+    namespace: mno
+  - files:
+    - install-manifests/4.18/custom-manifests/fast-upgrades-mcps.yaml
+    name: core-418-custom-manifests
+    namespace: mno
+generatorOptions:
+  disableNameSuffixHash: true
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At this point we can commit the changes to the repo. We will push the changes together with the cluster and Telco-related infrastructure operator configurations in the next section.</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/5g-deployment-lab/ztp-repository
+git add --all
+git commit -m 'Added OpenShift MNO cluster using agent-based install flow'
+git push origin main
+cd ~</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploying-mno-using-gitops-pipeline"><a class="anchor" href="#deploying-mno-using-gitops-pipeline"></a>Deploying the OpenShift Cluster using the ZTP GitOps Pipeline</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When we applied the ZTP GitOps Pipeline configuration in the last section, the ArgoCD app called clusters takes care of deploying the <code>mno</code> OpenShift cluster defined in the <code>ClusterInstance</code>.</p>
+</div>
+<div class="paragraph">
+<p>At this point, ArgoCD started doing its magic which means that the cluster deployment should already be running, let&#8217;s see what happened in Argo CD.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+It may take up to 5 minutes for Argo CD to start syncing changes.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Login into <a href="https://openshift-gitops-server-openshift-gitops.apps.hub.5g-deployment.lab/">Argo CD</a>.</p>
+</li>
+<li>
+<p>When accessing choose <code>Logging with OpenShift</code>. On the next screen use the OpenShift Console Admin credentials.</p>
+</li>
+<li>
+<p>From all these apps, click on <code>clusters</code> we will see something similar to the following screen:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/argocd-clusters-app-mno-abi.png" alt="ArgoCD Clusters App">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring-deployment"><a class="anchor" href="#monitoring-deployment"></a>Monitoring the Deployment</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once the ZTP GitOps Pipeline starts deploying our clusters we can follow the installation status via the WebUI or the CLI.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring-deployment-webui"><a class="anchor" href="#monitoring-deployment-webui"></a>Monitoring the Deployment via the WebUI</h2>
+<div class="sectionbody">
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+It may take a while for the installation to start. Wait at least 10 minutes if you see the message <code>The cluster is not ready for installation</code> or if the <code>MNO</code> cluster appears as <code>draft</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Access the <a href="https://console-openshift-console.apps.hub.5g-deployment.lab/multicloud/home/welcome">RHACM WebUI</a> and log in using your OpenShift credentials.</p>
+</li>
+<li>
+<p>In the top-left corner, click on <code>Fleet Management</code>.</p>
+</li>
+<li>
+<p>Navigate to <code>Infrastructure</code> &#8594; <code>Clusters</code>. If the deployment has not yet started, you will see a screen similar to this:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/acm-clusterview-draft.png" alt="RHACM Cluster View Draft">
+</div>
+</div>
+</li>
+<li>
+<p>Eventually, the <code>MNO</code> cluster will start its deployment:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/acm-clusterview.png" alt="RHACM Cluster View">
+</div>
+</div>
+</li>
+<li>
+<p>To check the deployment status of the <code>mno</code> cluster, click on <code>mno</code>. You will see a screen like this:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/acm-mno-abi-view.png" alt="RHACM mno Cluster View">
+</div>
+</div>
+</li>
+<li>
+<p>You can track progress here. For additional details, click on <code>View Cluster Events</code>, where you will see more information:</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/acm-mno-abi-clusterevents.png" alt="RHACM mno Cluster Events">
+</div>
+</div>
+</li>
+<li>
+<p>The deployment will eventually complete:</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The installation of the <code>MNO</code> cluster takes approximately 1 hour 30 minutes to complete.
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/acm-mno-abi-install-completed.png" alt="RHACM mno Cluster Deployment Finished">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring-deployment-cli"><a class="anchor" href="#monitoring-deployment-cli"></a>Monitoring the Deployment via the CLI</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The following commands must be executed from the workstation host unless specified otherwise.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check the <code>AgentClusterInstall</code> status for the SNO ABI cluster:</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig -n mno get agentclusterinstall mno</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME      CLUSTER   STATE
+mno       mno       finalizing</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For expanded information, similar to what is available in the WebUI, check the conditions of the <code>AgentClusterInstall</code> object during installation:</p>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/hub-kubeconfig -n mno get agentclusterinstall mno -o yaml</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">- lastProbeTime: "2026-03-17T16:18:20Z"
+  lastTransitionTime: "2026-03-17T16:18:20Z"
+  message: 'The installation is in progress: Finalizing cluster installation. Cluster
+    version status: progressing, message: Working towards 4.18.33: 523 of 829 done
+    (63% complete)'
+  reason: InstallationInProgress
+  status: "False"
+  type: Completed</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Once installed:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">- lastProbeTime: "2026-03-17T17:05:20Z"
+  lastTransitionTime: "2026-03-17T17:05:20Z"
+  message: 'The installation has completed: Cluster is installed'
+  reason: InstallationCompleted
+  status: "True"
+  type: Completed</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The installation of the <code>mno</code> cluster takes approximately 1 hour 30 minutes to complete.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="crafting-cluster-telco-related-infra-operators-configs.html">Crafting the Telco Core Reference Design Specification</a></span>
+  <span class="next"><a href="check-deployment-is-finished.html">Check MNO Deployment is finished</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
