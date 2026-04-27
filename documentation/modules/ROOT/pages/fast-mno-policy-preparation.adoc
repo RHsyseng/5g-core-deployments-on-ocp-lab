@@ -73,8 +73,6 @@ oc --kubeconfig ~/mno-kubeconfig get clusterversion
 ----
 NAME      VERSION   AVAILABLE   PROGRESSING   SINCE   STATUS
 version   {mno-cluster-version1}   True        False         21m     Cluster version is {mno-cluster-version1}
-NAME      VERSION       AVAILABLE   PROGRESSING   SINCE   STATUS
-version   {mno-cluster-version1}   True        False         1h      Cluster version is {mno-cluster-version1}
 ----
 
 Verify that the 3 custom worker MCPs exist, the default `worker` pool is empty, and all MCPs are currently paused:
