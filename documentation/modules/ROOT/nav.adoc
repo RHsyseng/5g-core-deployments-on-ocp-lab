@@ -126,11 +126,10 @@
 
 * xref:fast-mno-upgrades.adoc[Fast MNO Upgrades]
 ** xref:fast-mno-upgrades.adoc#introduction[Introduction]
-** xref:fast-mno-upgrades.adoc#prerequisites[Prerequisites]
-** xref:fast-mno-upgrades.adoc#resilient-cluster-architecture[Resilient Cluster Architecture]
-** xref:fast-mno-upgrades.adoc#cloud-native-workload-design[Cloud-native Workload Design]
-** xref:fast-mno-upgrades.adoc#zero-touch-automation[Zero-Touch Automation]
-** xref:fast-mno-upgrades.adoc#upgrade-stages[Upgrade Stages]
+** xref:fast-mno-upgrades.adoc#what-is-a-failure-domain[What is a Failure Domain?]
+** xref:fast-mno-upgrades.adoc#pillar-1-architecture[Resilient Cluster Architecture]
+** xref:fast-mno-upgrades.adoc#pillar-2-workload[Cloud-native Workload Design]
+** xref:fast-mno-upgrades.adoc#pillar-3-automation[Zero-Touch Automation]
 ** xref:fast-mno-upgrades.adoc#key-benefits[Key Benefits]
 
 * xref:lab-environment-introduction.adoc[Introduction to the Lab Environment]

@@ -93,6 +93,31 @@ worker-1   3              false
 worker-2   3              false
 ----
 
+Verify that the worker nodes are labeled with their corresponding Kubernetes failure domain (kfd0, kfd1, kfd2). More details about Kubernetes failure domains can be found in the previous xref:fast-mno-upgrades.adoc#failure-domains[Kubernetes Failure Domains] section.
+
+[.console-input]
+[source,bash,subs="attributes+,+macros"]
+----
+oc --kubeconfig ~/mno-kubeconfig get nodes --show-labels=false -L 'topology.kubernetes.io/zone'
+----
+
+[source,console,subs="attributes+,+macros"]
+----
+NAME              STATUS   ROLES                  AGE   VERSION    ZONE
+control-plane-0   Ready    control-plane,master   42m   {mno-cluster-version1-kubeversion}   
+control-plane-1   Ready    control-plane,master   58m   {mno-cluster-version1-kubeversion}   
+control-plane-2   Ready    control-plane,master   58m   {mno-cluster-version1-kubeversion}   
+worker-00         Ready    worker,worker-0        42m   {mno-cluster-version1-kubeversion}   kfd0
+worker-01         Ready    worker,worker-0        42m   {mno-cluster-version1-kubeversion}   kfd0
+worker-02         Ready    worker,worker-0        42m   {mno-cluster-version1-kubeversion}   kfd0
+worker-10         Ready    worker,worker-1        42m   {mno-cluster-version1-kubeversion}   kfd1
+worker-11         Ready    worker,worker-1        42m   {mno-cluster-version1-kubeversion}   kfd1
+worker-12         Ready    worker,worker-1        41m   {mno-cluster-version1-kubeversion}   kfd1
+worker-20         Ready    worker,worker-2        42m   {mno-cluster-version1-kubeversion}   kfd2
+worker-21         Ready    worker,worker-2        42m   {mno-cluster-version1-kubeversion}   kfd2
+worker-22         Ready    worker,worker-2        41m   {mno-cluster-version1-kubeversion}   kfd2
+----
+
 Finally, confirm that all 9 worker nodes are labeled with their corresponding Kubernetes failure domain:
 
 [.console-input]
