@@ -867,10 +867,10 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Edge deployments of clusters are typically characterized by a large number of clusters that must be managed with a high degree of reliability and service uptime. These deployments may include tens of clusters or tens of thousands of clusters which must be organized and managed across their lifetimes, from initial deployment through upgrades, configuration updates, and when necessary hardware replacement. Typically, the services being provided on these clusters must meet a high level of service availability, for example 5G services, which drives requirements on controlled access to the authoritative network description and carefully managing disruptive changes.</p>
+<p>Telco Core deployments typically involve managing a <strong>handful of multi-node OpenShift clusters</strong> across regions or central sites, not the massive edge footprint of RAN. Each cluster must run with high availability, and operators need <strong>aligned, consistent configuration</strong> across the fleet so that provisioning, upgrades, and day-2 changes remain predictable and auditable.</p>
 </div>
 <div class="paragraph">
-<p>The <strong>GitOps Zero Touch Provisioning (ZTP)</strong> methodology is designed to provide a highly reliable way to manage a fleet of Edge deployed clusters that meets these requirements across the full lifecycle of the clusters. ZTP allows you to provision new edge sites using declarative specifications for the configuration of bare-metal equipment at remote sites following a GitOps deployment set of practices. Ongoing management of configuration is also managed through the declarative specifications in Git. The ZTP methodology leverages Red Hat Advanced Cluster Management (RHACM) to fully automate ("zero touch") the initial deployment and configuration of the clusters as well as to provide ongoing cluster management and observability.</p>
+<p><strong>GitOps Zero Touch Provisioning (ZTP)</strong> addresses this by storing the desired state of every cluster—installation and ongoing configuration—in Git and reconciling it automatically from a <strong>central hub</strong>. ZTP uses declarative specifications for bare-metal provisioning and day-2 configuration following GitOps practices. <strong>Red Hat Advanced Cluster Management (RHACM)</strong> automates initial deployment and configuration ("zero touch") and provides <strong>central cluster management and lifecycle management (LCM)</strong> for the managed clusters.</p>
 </div>
 </div>
 </div>
@@ -878,7 +878,7 @@
 <h2 id="what-is-ztp"><a class="anchor" href="#what-is-ztp"></a>What is ZTP?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>ZTP is a project to deploy and deliver OpenShift 4 in a hub-and-spoke architecture (in a relation of 1-N), where a single hub cluster manages many spoke clusters. The hub and the spokes will be based on OpenShift 4 but with the difference that the hub cluster will manage, deploy and control the lifecycle of the spokes using Red Hat Advanced Cluster Management (RHACM).</p>
+<p>ZTP is a project to deploy and deliver OpenShift in a hub-and-spoke architecture (in a relation of 1-N), where a single hub cluster manages many spoke clusters. The hub and spokes run OpenShift; the hub additionally manages, deploys, and controls the lifecycle of the spokes using Red Hat Advanced Cluster Management (RHACM).</p>
 </div>
 <div class="paragraph">
 <p>Then, hub clusters running RHACM apply core network policies from predefined custom resources (CRs) and provision and deploy the spoke clusters using multiple products. Those components are part of what is called the Telco <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/scalability_and_performance/telco-core-ref-design-specs">Core Reference Design Specification (RDS)</a>. The Core RDS captures the recommended, tested, and supported configurations to get reliable and repeatable performance for clusters running the telco core profile, supporting large-scale applications such as control plane functions (signaling, aggregation, session border controller) and centralized data plane functions like 5G User Plane Functions (UPF).</p>
@@ -903,7 +903,7 @@ ZTP can operate in both connected and disconnected environments. In the connecte
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/ztp_edge_framework.png" alt="ZTP Edge Framework">
+<img src="_images/ztp_edge_framework.png" alt="ZTP hub-and-spoke framework">
 </div>
 </div>
 </div>

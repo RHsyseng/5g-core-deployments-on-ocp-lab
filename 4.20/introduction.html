@@ -901,10 +901,10 @@
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Understand Foundational 5G Core Concepts:</strong> Gain insights into critical Telco requirements such as NUMA Nodes, Huge Pages, CPU Pinning, SR-IOV, and PTP, and learn how these are addressed within the OpenShift platform to optimize performance for Core workloads.</p>
+<p><strong>Understand Foundational 5G Core Concepts:</strong> Gain insights into critical Telco requirements such as NUMA nodes, huge pages, CPU pinning, and SR-IOV, and learn how these are addressed within the OpenShift platform to optimize performance for Core workloads.</p>
 </li>
 <li>
-<p><strong>Explore Telco-Specific OpenShift Operators:</strong> Learn about the purpose and application of essential operators, including the Node Tuning Operator, SR-IOV Operator, PTP Operator, Metal-LB Operator, and the ODF Operator, for configuring OpenShift to meet 5G Core demands.</p>
+<p><strong>Explore Telco-Specific OpenShift Operators:</strong> Learn about operators used in Telco Core deployments, including the SR-IOV Network Operator, MetalLB, Kubernetes NMState Operator, NUMA Resources Operator (NROP), Cluster Logging Operator, and OpenShift Data Foundation (ODF), and how the Node Tuning Operator (included with the platform) configures performance profiles for Core workloads.</p>
 </li>
 <li>
 <p><strong>Master Zero Touch Provisioning (ZTP) and OpenShift GitOps:</strong> Understand the principles of Zero Touch Provisioning (ZTP) and OpenShift GitOps for efficiently deploying and managing Multi Node OpenShift (MNO) clusters at scale. This includes leveraging Red Hat Advanced Cluster Management (RHACM) and its key components like the SiteConfig Operator, Infrastructure Operator, and Topology Aware Lifecycle Manager (TALM).</p>
@@ -916,7 +916,7 @@
 <p><strong>Utilize the Lab Environment&#8217;s Dedicated Infrastructure:</strong> Become proficient in interacting with the lab&#8217;s key components, including the Git Server (Gitea), Container Registry, OpenShift Hub Cluster, HTTP Server for serving local RHCOS images, and S3 Storage Server for logging operations.</p>
 </li>
 <li>
-<p><strong>Build and Deploy a ZTP GitOps Pipeline:</strong> Prepare and deploy a complete ZTP GitOps pipeline, crafting Telco Core Reference Design Specification policies (Common, Group, and Site Policies) to automate cluster configuration and deployment.</p>
+<p><strong>Build and Deploy a ZTP GitOps Pipeline:</strong> Prepare and deploy a complete ZTP GitOps pipeline, crafting Telco Core Reference Design Specification configuration using <code>PolicyGenerator</code> resources—combining baseline reference CRs with overlays to automate cluster configuration and deployment.</p>
 </li>
 <li>
 <p><strong>Perform a Fast or High-Speed MNO Upgrade:</strong> Get hands-on experience with the Fast Upgrade methodology by executing a fully automated, multi-version EUS-to-EUS (4.18 to 4.20) upgrade on a MNO cluster managed by ACM and TALM. You will learn how this approach achieves upgrades up to three times faster than traditional serial methods, turning a potentially lengthy and high-risk operation into a predictable, efficient, and repeatable process.</p>
@@ -950,7 +950,10 @@ This comprehensive journey will equip you with the knowledge and practical skill
 <p>MCE v2.10.</p>
 </li>
 <li>
-<p>ZTP Generator v4.20.</p>
+<p>RHACM Policy Generator plugin.</p>
+</li>
+<li>
+<p>Telco Core Reference Design Specification for OpenShift v4.18, v4.19 and v4.20.</p>
 </li>
 </ul>
 </div>

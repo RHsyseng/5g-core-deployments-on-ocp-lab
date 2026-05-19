@@ -985,7 +985,7 @@ A separate bootstrap machine is only required for IPI/UPI installations. The Age
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Compute / Worker</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">8 GB</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">100 GB</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">300</p></td>
@@ -999,7 +999,7 @@ A separate bootstrap machine is only required for IPI/UPI installations. The Age
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-These are absolute minimums to boot OpenShift. Telco Core production clusters running CNFs, DPDK-based UPF, or ODF storage require significantly higher resources. Sizing must be validated against your specific workload profile.
+These are absolute minimums to boot OpenShift. Where hyper-threading is enabled, 4 vCPU corresponds to 2 physical CPUs (4 hyper-threads), matching the Core RDS platform reservation described below. Telco Core production clusters running CNFs, DPDK-based UPF, or ODF storage require significantly higher resources. Sizing must be validated against your specific workload profile.
 </td>
 </tr>
 </table>
@@ -1098,7 +1098,7 @@ These are absolute minimums to boot OpenShift. Telco Core production clusters ru
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Web-based Assisted Installer</strong> — suitable for installing individual clusters via a GUI wizard at <a href="https://console.redhat.com/openshift/assisted-installer/clusters">Red Hat OpenShift Cluster Manager</a>. It does not scale to fleet management.</p>
+<p><strong>Web-based Assisted Installer</strong> — provides a GUI wizard at <a href="https://console.redhat.com/openshift/assisted-installer/clusters">Red Hat OpenShift Cluster Manager</a> for installing individual clusters in connected environments. It does not scale to fleet management and is a poor fit for fully disconnected deployments, where Telco Core clusters typically operate.</p>
 </li>
 <li>
 <p><strong>Agent Based Installer (ABI)</strong> — generates a bootable ISO from a declarative configuration; no additional servers or infrastructure are required for the install process. Suitable for disconnected bare-metal deployments. Like IPI/UPI, it does not provide ongoing lifecycle management or fleet automation. See the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/installing_an_on-premise_cluster_with_the_agent-based_installer/index">official ABI documentation</a>.</p>

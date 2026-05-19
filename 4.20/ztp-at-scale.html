@@ -897,7 +897,7 @@ Since OpenShift 4.18, the <code>SiteConfig</code> resource managed by the SiteCo
 <p>The <strong>Red Hat OpenShift GitOps</strong> operator allows building and integrating declarative Git-driven workflows. It is a key component and it is extended with the <code>policy-generator</code> kustomize plugin. The <code>siteconfig-generator</code> is no longer needed as it is replaced by the SiteConfig Operator.</p>
 </li>
 <li>
-<p>The <strong>SiteConfig Operator</strong> enables users to deploy clusters using either the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Agent Based Installation</a> or the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/image-based-installation-for-single-node-openshift">Image Based Installation</a> deployment flows through the ClusterInstance API. Currently, the IBI flow is only targeting <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/installing_on_a_single_node/install-sno-installing-sno#install-sno-generating-the-discovery-iso-with-the-assisted-installer_install-sno-installing-sno-with-the-assisted-installer">Single Node OpenShift</a> (SNO) clusters. The ClusterInstance CR will be rendered by the SiteConfig Operator as installation CRs.</p>
+<p>The <strong>SiteConfig Operator</strong> enables users to deploy clusters using either the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Assisted Installer</a> or the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/image-based-installation-for-single-node-openshift">Image Based Installation</a> deployment flows through the ClusterInstance API. The IBI flow targets only <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/installing_on_a_single_node/install-sno-installing-sno#install-sno-generating-the-discovery-iso-with-the-assisted-installer_install-sno-installing-sno-with-the-assisted-installer">Single Node OpenShift</a> (SNO) clusters. The ClusterInstance CR will be rendered by the SiteConfig Operator as installation CRs.</p>
 </li>
 <li>
 <p>The <strong>Assisted Service</strong> operator, now called Infrastructure operator, is a component of the Multicluster Engine Operator and is responsible for provisioning OpenShift clusters. It is part of the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Assisted Installer deployment workflow</a>.</p>
@@ -967,7 +967,7 @@ The Multicluster Engine for Kubernetes operator is entitled with OpenShift.
 <p>The SiteConfig Operator introduces a unified ClusterInstance API, which is derived from the SiteConfig API from the SiteConfig Generator kustomize plugin. This API decouples parameters that define a cluster from the manner in which the cluster is deployed. This separation removed certain limitations that were presented by the SiteConfig kustomize plugin in the past.</p>
 </div>
 <div class="paragraph">
-<p>Because of this decoupling, the SiteConfig Operator allows deploying OpenShift clusters using either the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Agent Based Installation</a> or <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/image-based-installation-for-single-node-openshift">Image Based Installation</a> flows depending on the user&#8217;s needs. See as well that the operator is the entry point for any GitOps ZTP deployment.</p>
+<p>Because of this decoupling, the SiteConfig Operator allows deploying OpenShift clusters using either the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Assisted Installer</a> or <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/image-based-installation-for-single-node-openshift">Image Based Installation</a> flows depending on the user&#8217;s needs. See as well that the operator is the entry point for any GitOps ZTP deployment.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -976,7 +976,7 @@ The Multicluster Engine for Kubernetes operator is entitled with OpenShift.
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-In Single Node OpenShift Telco RAN environments the <strong>Image Based Installation</strong> deployment method is the preferred one due to the reduced installation times and the scalability requirements required in edge deployments. For Telco Core, ZTP provisions multi-node OpenShift (MNO) clusters using the Agent Based Installation flow through the SiteConfig Operator.
+In Single Node OpenShift Telco RAN environments the <strong>Image Based Installation</strong> deployment method is the preferred one due to the reduced installation times and the scalability requirements required in edge deployments. For Telco Core, ZTP provisions multi-node OpenShift (MNO) clusters using the Assisted Installer flow through the SiteConfig Operator.
 </td>
 </tr>
 </table>
@@ -985,12 +985,15 @@ In Single Node OpenShift Telco RAN environments the <strong>Image Based Installa
 <p>The SiteConfig Operator dynamically generates installation manifests based on user-defined cluster templates that are instantiated from the data in the ClusterInstance CR. You can source the ClusterInstance CR from your Git repository through ArgoCD, or manually on the hub cluster.</p>
 </div>
 <div class="paragraph">
+<p>The SiteConfig Operator provides <strong>default cluster templates</strong> (ConfigMap-based templates on the hub) that you can use as-is or customize when defining <code>ClusterInstance</code> resources.</p>
+</div>
+<div class="paragraph">
 <p>As shown in the picture, the process involves the following steps:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Create one or more sets of cluster templates on the hub cluster called ConfigMap Templates.</p>
+<p>Use the operator&#8217;s default cluster templates on the hub cluster, or create customized ConfigMap Templates derived from them.</p>
 </li>
 <li>
 <p>Create a ClusterInstance CR that references those cluster templates and supporting manifests.</p>
@@ -1019,7 +1022,7 @@ In Single Node OpenShift Telco RAN environments the <strong>Image Based Installa
 <div class="sect2">
 <h3 id="ai"><a class="anchor" href="#ai"></a>Infrastructure Operator</h3>
 <div class="paragraph">
-<p>The Infrastructure operator for Red Hat OpenShift, formerly known as Assisted Service operator, is responsible for managing the deployment of the <strong>Assisted Service</strong>. Assisted Service is used to orchestrate bare metal OpenShift installations. Basically, it is the piece that will help us to automatically provision OpenShift clusters in a declarative manner following the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Assisted Installer</a> flow. It also exposes a UI and a REST API for creating new clusters.</p>
+<p>The Infrastructure operator for Red Hat OpenShift, formerly known as Assisted Service operator, is responsible for managing the deployment of the <strong>Assisted Service</strong>. Assisted Service is used to orchestrate bare metal OpenShift installations. Basically, it is the piece that will help us to automatically provision OpenShift clusters in a declarative manner following the <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-deploying-far-edge-sites#ztp-deploying-a-site_ztp-deploying-far-edge-sites">Assisted Installer</a> flow.</p>
 </div>
 <div class="paragraph">
 <p>A high overview of the basic flow is as follows. Note that in the solution presented in this lab these steps are automated and derive from the declarative configuration in Git which provides a "zero touch" deployment of clusters.</p>
@@ -1027,22 +1030,16 @@ In Single Node OpenShift Telco RAN environments the <strong>Image Based Installa
 <div class="ulist">
 <ul>
 <li>
-<p>Create a new <code>Cluster</code> resource with the minimal required properties.</p>
+<p>The <a href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a> creates the installation custom resources (for example, <code>InfraEnv</code> and host definitions) from the <code>ClusterInstance</code> CR.</p>
 </li>
 <li>
-<p>Generate and download a bootable image which is customized for that cluster. This image is based on RHCOS and is customized to automatically run an agent upon boot.</p>
+<p>The Assisted Service registers the hosts and performs discovery (hardware inventory and connectivity).</p>
 </li>
 <li>
-<p>Boot the hosts that will form the cluster with the image from the previous step. The boot method is left to the user (e.g., USB drive, virtual media, PXE, etc.).</p>
+<p>For bare metal deployments managed from the hub, the Assisted Installer mounts the boot image on the nodes (via Ironic); there is no need to download or manually attach an ISO in the recommended ZTP flow.</p>
 </li>
 <li>
-<p>The agent running on each host contacts the Assisted Service via REST API and performs discovery (sends hardware inventory and connectivity information).</p>
-</li>
-<li>
-<p>The UI guides the user through the installation, with the service performing validations along the way. Alternatively, this can be done via API.</p>
-</li>
-<li>
-<p>Once all validations pass, the user may initiate the installation. Progress may be viewed via the UI or API, and logs are made available for download directly from the service.</p>
+<p>After validations pass, the installation starts and progresses automatically.</p>
 </li>
 </ul>
 </div>
@@ -1077,7 +1074,7 @@ Argo CD can pull and apply any Kubernetes custom resource, however, for ZTP we a
 <p>However, certainly, both are high-level manifests that are not understood by the hub cluster. There is something in between that will translate those high-level definitions into something that RHACM (including MCE) recognizes. We are referring to the <a href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a> when deploying clusters and <a href="https://github.com/open-cluster-management-io/policy-generator-plugin">Policy generator kustomize plugin</a> when configuring it.</p>
 </div>
 <div class="paragraph">
-<p>While the SiteConfig Operator follows a classical operator installation, the Policy generator kustomize plugin is installed into the OpenShift GitOps operator during the initial setup/configuration of the hub cluster. The procedure is <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-preparing-the-hub-cluster">fully documented here</a>. Basically, it modifies the <code>openshift-gitops-repo-server</code> deployment to include an initContainer that will load the kustomize plugin. Then, every time a PolicyGenerator is pulled from a Git repo, the proper kustomize plugin will be used and transform the manifest into the proper custom resources.</p>
+<p>While the SiteConfig Operator follows a classical operator installation, the Policy generator kustomize plugin is installed into the OpenShift GitOps operator during the initial setup/configuration of the hub cluster. Hub cluster preparation—including installing the <code>policy-generator</code> kustomize plugin—is covered in <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-preparing-the-hub-cluster#ztp-configuring-hub-cluster-with-argocd_ztp-preparing-the-hub-cluster">Configuring the hub cluster with ArgoCD</a>. OpenShift GitOps loads the plugin (via an initContainer on the <code>openshift-gitops-repo-server</code> deployment) so that <code>PolicyGenerator</code> manifests pulled from Git are rendered into the RHACM custom resources the hub expects.</p>
 </div>
 <div class="sect2">
 <h3 id="sitegen"><a class="anchor" href="#sitegen"></a>SiteGen</h3>

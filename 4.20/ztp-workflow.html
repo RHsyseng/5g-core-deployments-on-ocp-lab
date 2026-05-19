@@ -887,7 +887,7 @@ The workflow requires no manual intervention; ZTP automatically configures the M
 <h2 id="deployment-methods"><a class="anchor" href="#deployment-methods"></a>Multi-Node OpenShift Deployments</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For Telco Core, ZTP provisions multi-node OpenShift (MNO) clusters using the <strong>Agent Based Installation</strong> flow through the <a href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a>. The <a href="ztp-at-scale.html#ai">Assisted Service</a> is central to this deployment method.</p>
+<p>For Telco Core, ZTP provisions multi-node OpenShift (MNO) clusters using the <strong>Assisted Installer</strong> flow through the <a href="ztp-at-scale.html#siteconfig">SiteConfig Operator</a>. The <a href="ztp-at-scale.html#ai">Assisted Service</a> is central to this deployment method.</p>
 </div>
 <div class="paragraph">
 <p>It starts with creating declarative configurations for the provisioning of your OpenShift clusters. This manifest is defined in a custom resource called <code>ClusterInstance</code>. In a disconnected environment, a container registry is needed to deliver the OpenShift container images required for the installation. This can be achieved using <a href="https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/disconnected_environments/mirroring-in-disconnected-environments#installing-mirroring-creating-registry">oc-mirror</a> (starting in OCP 4.18, oc-mirror v2 is the preferred approach). More information about disconnected environments can be found in <a href="deployment-considerations.html#disconnected-environments">Deployment Considerations section</a>.</p>

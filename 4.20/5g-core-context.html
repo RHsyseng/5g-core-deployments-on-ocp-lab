@@ -905,7 +905,7 @@
 <p>Telco Core clusters use Kubernetes failure domains to support high availability and faster upgrades. Every node is labeled with <code>topology.kubernetes.io/zone</code>, and OpenShift applies a default <code>TopologySpreadConstraint</code> to all replica constructs (<code>Service</code>, <code>ReplicaSet</code>, <code>StatefulSet</code>) so that pod replicas are spread across zones automatically.</p>
 </div>
 <div class="paragraph">
-<p>The recommended pattern is to map each MCP to a single distinct zone. This way, all nodes in an MCP can be upgraded simultaneously (assuming sufficient spare capacity) while the zone-based spread ensures that no single zone outage takes down more pods than the <code>PodDisruptionBudget</code> (PDB) allows.</p>
+<p>The recommended pattern is to map each MCP to a single distinct zone. This way, all nodes in an MCP can be upgraded simultaneously (assuming sufficient spare capacity and applications SLA requirements) while the zone-based spread ensures that no single zone outage takes down more pods than the <code>PodDisruptionBudget</code> (PDB) allows.</p>
 </div>
 <div class="paragraph">
 <p>Key considerations:</p>
