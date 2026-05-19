@@ -70,6 +70,7 @@ When using GitOps to manage infrastructure declaratively, the use of branches is
 * In a directory model, clusters (or configuration content) can be moved between environments by a simple move rather than requiring a merge.
 * Comparing configuration between environments is simpler in a directory model.
 * Continuous deployment relies on subscriptions to the repository and branch which should be synchronized to the cluster(s). A branching model forces users to manage additional subscriptions per branch. In a directory model the user has options to use one subscription for multiple environments or multiple subscriptions.
+* During fleet upgrades or phased rollouts, *different clusters in the same fleet are often on different OpenShift releases at the same time*—for example, cluster A still on the current release while cluster B has already been upgraded. The same pattern applies when *one or a few clusters run a pre-GA or candidate release* as a test bed while the rest of the fleet stays on the supported release. A directory layout (such as per-release folders for policy and RDS content) keeps each release's configuration distinct on one branch, and cluster labels bind each cluster to the release it should receive. A branch-per-release model duplicates that structure and complicates comparison and promotion between releases.
 
 One thing that we still need to keep in mind is that we want to have different repositories for the application code (where you can continue to use branches) and for the GitOps configuration.
 

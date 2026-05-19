@@ -1,15 +1,15 @@
 = Introduction to Zero Touch Provisioning (ZTP)
 include::_attributes.adoc[]
-:profile: 5g-ran-lab
+:profile: 5g-core-lab
 
-Edge deployments of clusters are typically characterized by a large number of clusters that must be managed with a high degree of reliability and service uptime. These deployments may include tens of clusters or tens of thousands of clusters which must be organized and managed across their lifetimes, from initial deployment through upgrades, configuration updates, and when necessary hardware replacement. Typically, the services being provided on these clusters must meet a high level of service availability, for example 5G services, which drives requirements on controlled access to the authoritative network description and carefully managing disruptive changes.
+Telco Core deployments typically involve managing a *handful of multi-node OpenShift clusters* across regions or central sites, not the massive edge footprint of RAN. Each cluster must run with high availability, and operators need *aligned, consistent configuration* across the fleet so that provisioning, upgrades, and day-2 changes remain predictable and auditable.
 
-The *GitOps Zero Touch Provisioning (ZTP)* methodology is designed to provide a highly reliable way to manage a fleet of Edge deployed clusters that meets these requirements across the full lifecycle of the clusters. ZTP allows you to provision new edge sites using declarative specifications for the configuration of bare-metal equipment at remote sites following a GitOps deployment set of practices. Ongoing management of configuration is also managed through the declarative specifications in Git. The ZTP methodology leverages Red Hat Advanced Cluster Management (RHACM) to fully automate ("zero touch") the initial deployment and configuration of the clusters as well as to provide ongoing cluster management and observability.
+*GitOps Zero Touch Provisioning (ZTP)* addresses this by storing the desired state of every cluster—installation and ongoing configuration—in Git and reconciling it automatically from a *central hub*. ZTP uses declarative specifications for bare-metal provisioning and day-2 configuration following GitOps practices. *Red Hat Advanced Cluster Management (RHACM)* automates initial deployment and configuration ("zero touch") and provides *central cluster management and lifecycle management (LCM)* for the managed clusters.
 
 [#what-is-ztp]
 == What is ZTP?
 
-ZTP is a project to deploy and deliver OpenShift 4 in a hub-and-spoke architecture (in a relation of 1-N), where a single hub cluster manages many spoke clusters. The hub and the spokes will be based on OpenShift 4 but with the difference that the hub cluster will manage, deploy and control the lifecycle of the spokes using Red Hat Advanced Cluster Management (RHACM).
+ZTP is a project to deploy and deliver OpenShift in a hub-and-spoke architecture (in a relation of 1-N), where a single hub cluster manages many spoke clusters. The hub and spokes run OpenShift; the hub additionally manages, deploys, and controls the lifecycle of the spokes using Red Hat Advanced Cluster Management (RHACM).
 
 Then, hub clusters running RHACM apply core network policies from predefined custom resources (CRs) and provision and deploy the spoke clusters using multiple products. Those components are part of what is called the Telco {core-rds-link}[Core Reference Design Specification (RDS)]. The Core RDS captures the recommended, tested, and supported configurations to get reliable and repeatable performance for clusters running the telco core profile, supporting large-scale applications such as control plane functions (signaling, aggregation, session border controller) and centralized data plane functions like 5G User Plane Functions (UPF).
 
@@ -19,4 +19,4 @@ IMPORTANT: ZTP can operate in both connected and disconnected environments. In t
 
 ZTP provides support for deploying single node clusters, compact or three node clusters, and standard OpenShift clusters. This includes the installation of OpenShift and deployment of the cluster at scale. In this lab, we will focus on Multi-Node OpenShift (MNO) clusters, which is the reference topology for Telco Core deployments, as introduced in link:mno-intro.html[Introduction to Multi-Node OpenShift (MNO)].
 
-image::ztp_edge_framework.png[ZTP Edge Framework]
+image::ztp_edge_framework.png[ZTP hub-and-spoke framework]

@@ -55,13 +55,13 @@ NOTE: A separate bootstrap machine is only required for IPI/UPI installations. T
 | 300
 
 | Compute / Worker
-| 2
+| 4
 | 8 GB
 | 100 GB
 | 300
 |===
 
-NOTE: These are absolute minimums to boot OpenShift. Telco Core production clusters running CNFs, DPDK-based UPF, or ODF storage require significantly higher resources. Sizing must be validated against your specific workload profile.
+NOTE: These are absolute minimums to boot OpenShift. Where hyper-threading is enabled, 4 vCPU corresponds to 2 physical CPUs (4 hyper-threads), matching the Core RDS platform reservation described below. Telco Core production clusters running CNFs, DPDK-based UPF, or ODF storage require significantly higher resources. Sizing must be validated against your specific workload profile.
 
 The following additional constraints are defined by the https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/scalability_and_performance/telco-core-ref-design-specs#telco-core-ref-design-overview[Core RDS]:
 
@@ -99,7 +99,7 @@ A Telco operator does not manage a single Core cluster — it manages a **large 
 
 Other installation methods exist and are briefly described below, but they are not recommended for managing a fleet:
 
-* **Web-based Assisted Installer** — suitable for installing individual clusters via a GUI wizard at https://console.redhat.com/openshift/assisted-installer/clusters[Red Hat OpenShift Cluster Manager]. It does not scale to fleet management.
+* **Web-based Assisted Installer** — provides a GUI wizard at https://console.redhat.com/openshift/assisted-installer/clusters[Red Hat OpenShift Cluster Manager] for installing individual clusters in connected environments. It does not scale to fleet management and is a poor fit for fully disconnected deployments, where Telco Core clusters typically operate.
 * **Agent Based Installer (ABI)** — generates a bootable ISO from a declarative configuration; no additional servers or infrastructure are required for the install process. Suitable for disconnected bare-metal deployments. Like IPI/UPI, it does not provide ongoing lifecycle management or fleet automation. See the https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/installing_an_on-premise_cluster_with_the_agent-based_installer/index[official ABI documentation].
 * **Installer-Provisioned Infrastructure (IPI) / User-Provisioned Infrastructure (UPI)** — the standard OpenShift baremetal installer. Useful for one-off deployments, but requires per-cluster manual effort without GitOps tooling on top.
 

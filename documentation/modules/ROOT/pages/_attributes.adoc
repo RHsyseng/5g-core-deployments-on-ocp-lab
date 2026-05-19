@@ -77,6 +77,7 @@ code:experimental:
 :ocp-cli-docs: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/cli_tools/openshift-cli-oc#cli-about-cli_cli-developer-commands
 :sno-installing-docs: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/installing_on_a_single_node/install-sno-installing-sno#install-sno-generating-the-discovery-iso-with-the-assisted-installer_install-sno-installing-sno-with-the-assisted-installer
 :ztp-gitops-docs: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-preparing-the-hub-cluster
+:ztp-gitops-install-plugin-docs: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/edge_computing/ztp-preparing-the-hub-cluster#ztp-configuring-hub-cluster-with-argocd_ztp-preparing-the-hub-cluster
 :nto-docs: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/scalability_and_performance/using-node-tuning-operator
 :sriov-docs: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/networking/hardware-networks#about-sriov
 :sriov-supported-nics: https://docs.redhat.com/en/documentation/openshift_container_platform/4.20/html/networking/hardware-networks#supported-devices_about-sriov

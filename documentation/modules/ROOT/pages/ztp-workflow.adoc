@@ -9,7 +9,7 @@ IMPORTANT: The workflow requires no manual intervention; ZTP automatically confi
 [#deployment-methods]
 == Multi-Node OpenShift Deployments
 
-For Telco Core, ZTP provisions multi-node OpenShift (MNO) clusters using the *Agent Based Installation* flow through the link:ztp-at-scale.html#siteconfig[SiteConfig Operator]. The link:ztp-at-scale.html#ai[Assisted Service] is central to this deployment method.
+For Telco Core, ZTP provisions multi-node OpenShift (MNO) clusters using the *Assisted Installer* flow through the link:ztp-at-scale.html#siteconfig[SiteConfig Operator]. The link:ztp-at-scale.html#ai[Assisted Service] is central to this deployment method.
 
 It starts with creating declarative configurations for the provisioning of your OpenShift clusters. This manifest is defined in a custom resource called `ClusterInstance`. In a disconnected environment, a container registry is needed to deliver the OpenShift container images required for the installation. This can be achieved using {disconnected-registry-docs}[oc-mirror] (starting in OCP 4.18, oc-mirror v2 is the preferred approach). More information about disconnected environments can be found in link:deployment-considerations.html#disconnected-environments[Deployment Considerations section].
 

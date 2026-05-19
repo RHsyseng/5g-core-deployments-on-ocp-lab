@@ -1,6 +1,6 @@
 = Acronyms used in the lab
 include::_attributes.adoc[]
-:profile: 5g-ran-lab
+:profile: 5g-core-lab
 
 [cols="1,1"]
 |===
@@ -33,8 +33,8 @@ include::_attributes.adoc[]
 |NTO
 |Node Tuning Operator
 
-|PGT
-|PolicyGenTemplates
+|PG
+|PolicyGenerator
 
 |PMD
 |Poll Mode Driver

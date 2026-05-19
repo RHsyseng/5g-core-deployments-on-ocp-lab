@@ -1,6 +1,6 @@
 = Introduction
 include::_attributes.adoc[]
-:profile: 5g-ran-lab
+:profile: 5g-core-lab
 
 Welcome to this lab focused on deploying 5G Core ready infrastructure on OpenShift, designed to enhance your understanding and practical skills.
 
@@ -19,12 +19,12 @@ The lab is aimed at technical profiles working with OpenShift who are interested
 
 This lab provides a comprehensive, hands-on journey into deploying and managing **5G Core workloads on OpenShift**, with a strong focus on automation and scalability for Telco environments. By completing this lab, you will achieve the following:
 
-• **Understand Foundational 5G Core Concepts:** Gain insights into critical Telco requirements such as NUMA Nodes, Huge Pages, CPU Pinning, SR-IOV, and PTP, and learn how these are addressed within the OpenShift platform to optimize performance for Core workloads.
-• **Explore Telco-Specific OpenShift Operators:** Learn about the purpose and application of essential operators, including the Node Tuning Operator, SR-IOV Operator, PTP Operator, Metal-LB Operator, and the ODF Operator, for configuring OpenShift to meet 5G Core demands.
+• **Understand Foundational 5G Core Concepts:** Gain insights into critical Telco requirements such as NUMA nodes, huge pages, CPU pinning, and SR-IOV, and learn how these are addressed within the OpenShift platform to optimize performance for Core workloads.
+• **Explore Telco-Specific OpenShift Operators:** Learn about operators used in Telco Core deployments, including the SR-IOV Network Operator, MetalLB, Kubernetes NMState Operator, NUMA Resources Operator (NROP), Cluster Logging Operator, and OpenShift Data Foundation (ODF), and how the Node Tuning Operator (included with the platform) configures performance profiles for Core workloads.
 • **Master Zero Touch Provisioning (ZTP) and OpenShift GitOps:** Understand the principles of Zero Touch Provisioning (ZTP) and OpenShift GitOps for efficiently deploying and managing Multi Node OpenShift (MNO) clusters at scale. This includes leveraging Red Hat Advanced Cluster Management (RHACM) and its key components like the SiteConfig Operator, Infrastructure Operator, and Topology Aware Lifecycle Manager (TALM).
 • **Deploy MNO Clusters with Advanced Methods:** Practically deploy Multi Node OpenShift (MNO) clusters. You will configure these clusters with specialized 5G Core Profiles.
 • **Utilize the Lab Environment's Dedicated Infrastructure:** Become proficient in interacting with the lab's key components, including the Git Server (Gitea), Container Registry, OpenShift Hub Cluster, HTTP Server for serving local RHCOS images, and S3 Storage Server for logging operations.
-• **Build and Deploy a ZTP GitOps Pipeline:** Prepare and deploy a complete ZTP GitOps pipeline, crafting Telco Core Reference Design Specification policies (Common, Group, and Site Policies) to automate cluster configuration and deployment.
+• **Build and Deploy a ZTP GitOps Pipeline:** Prepare and deploy a complete ZTP GitOps pipeline, crafting Telco Core Reference Design Specification configuration using `PolicyGenerator` resources—combining baseline reference CRs with overlays to automate cluster configuration and deployment.
 • **Perform a Fast or High-Speed MNO Upgrade:** Get hands-on experience with the Fast Upgrade methodology by executing a fully automated, multi-version EUS-to-EUS (4.18 to 4.20) upgrade on a MNO cluster managed by ACM and TALM. You will learn how this approach achieves upgrades up to three times faster than traditional serial methods, turning a potentially lengthy and high-risk operation into a predictable, efficient, and repeatable process.
 • **Monitor and Troubleshoot Deployments:** Gain experience in monitoring MNO cluster deployments via both WebUI and CLI, and learn common troubleshooting tips for ensuring smooth operations.
 This comprehensive journey will equip you with the knowledge and practical skills necessary to design, deploy, and manage highly optimized 5G Core deployments on OpenShift in real-world Telco environments.
@@ -38,4 +38,5 @@ The lab is based on the following software versions:
 * MNO Cluster OpenShift {mno-cluster-version1}, {mno-cluster-version2} and {mno-cluster-version3}.
 * RHACM {rhacm-version}.
 * MCE {mce-version}.
-* ZTP Generator {ztp-generator-version}.
+* RHACM Policy Generator plugin.
+* Telco Core Reference Design Specification for OpenShift {openshift-release}, {openshift-intermediate-release} and {openshift-final-release}.

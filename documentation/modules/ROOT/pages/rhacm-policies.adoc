@@ -33,9 +33,11 @@ At a glance, once we create a policy in the hub cluster, the Governance Policy f
 
 Policy CRs, as defined by the Policy CRD, are created on the hub cluster and act as a vehicle to deliver policies to managed cluster and collect results to send to the hub cluster.
 
-Each `Policy` can contain one or multiple policy rules that will be evaluated against cluster(s) that they are bound to. Policy binding is determined by the RHACM placement APIs which include the `PlacementBinding` and the `PlacementRule` CRs.
+Each `Policy` can contain one or multiple policy rules that will be evaluated against cluster(s) that they are bound to. Policy binding is determined by the RHACM placement APIs, which include the `PlacementBinding` and `Placement` CRs. 
 
-Note that the PlacementBinding connects the Policy to the PlacementRule, and the PlacementRule defines where (on what clusters) the Policy should be active. View the following example specification of a Policy object:
+WARNING: The older `PlacementRule` API is deprecated; use `Placement` instead from RHACM 2.7 and later.
+
+Note that the PlacementBinding connects the Policy to a `Placement`, and the Placement defines where (on what clusters) the Policy should be active. View the following example specification of a Policy object:
 
 [console-input]
 [source,yaml,subs="attributes+,+macros"]
@@ -113,7 +115,7 @@ spec:
         severity: low
 -----
 
-The PlacementBinding CRD is used to bind the Policy with a PlacementRule. Only a bound Policy is distributed to a managed cluster by the policy framework. View the following example specification of a PlacementBinding object:
+The PlacementBinding CRD is used to bind the Policy with a `Placement`. Only a bound Policy is distributed to a managed cluster by the policy framework. View the following example specification of a PlacementBinding object:
 
 [console-input]
 [source,yaml,subs="attributes+,+macros"]
@@ -124,39 +126,40 @@ metadata:
   name: common-core-config-placementbinding
   namespace: ztp-policies
 placementRef:
-  apiGroup: apps.open-cluster-management.io
-  kind: PlacementRule
-  name: common-core-config-placementrules
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+  name: common-core-config-placement
 subjects:
 - apiGroup: policy.open-cluster-management.io
   kind: Policy
   name: common-core-config-policy
 -----
 
-The PlacementRule CRD is used to determine the target clusters to distribute policies to. The PlacementRule can match clusters based on labels applied to the ManagedCluster CR on the hub cluster. Each target (spoke) cluster under management by RHACM on the hub cluster will have a corresponding ManagedCluster CR. View the following example specification of a PlacementRule object:
+The `Placement` CRD is used to determine the target clusters to distribute policies to. A Placement selects clusters based on labels on the `ManagedCluster` CR on the hub cluster. Each target (spoke) cluster under management by RHACM will have a corresponding `ManagedCluster` CR. The placement controller writes a `PlacementDecision` listing the selected clusters; you do not define that object in Git.
+
+View the following example specification of a Placement object:
 
 [console-input]
 [source,yaml,subs="attributes+,+macros"]
 -----
-apiVersion: apps.open-cluster-management.io/v1
-kind: PlacementRule
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
 metadata:
-  name: common-core-config-placementrules
+  name: common-core-config-placement
   namespace: ztp-policies
 spec:
-  clusterSelector:
-    matchExpressions:
-    - key: common
-      operator: In
-      values:
-      - ocp420
-    - key: rds
-      operator: In
-      values:
-      - core
-  clusterConditions:
-  - status: "True"
-    type: ManagedClusterConditionAvailable
+  predicates:
+  - requiredClusterSelector:
+      labelSelector:
+        matchExpressions:
+        - key: common
+          operator: In
+          values:
+          - ocp420
+        - key: rds
+          operator: In
+          values:
+          - core
 -----
 
 [#policy-status]
