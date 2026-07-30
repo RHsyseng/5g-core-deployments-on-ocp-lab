@@ -118,31 +118,6 @@ worker-21         Ready    worker,worker-2        42m   {mno-cluster-version1-ku
 worker-22         Ready    worker,worker-2        41m   {mno-cluster-version1-kubeversion}   kfd2
 ----
 
-Finally, confirm that all 9 worker nodes are labeled with their corresponding Kubernetes failure domain:
-
-[.console-input]
-[source,bash,subs="attributes+,+macros"]
-----
-oc --kubeconfig ~/mno-kubeconfig get nodes
-----
-
-[source,console,subs="attributes+,+macros"]
-----
-NAME              STATUS   ROLES                  AGE     VERSION
-control-plane-0   Ready    control-plane,master   4d18h   {mno-cluster-version1-kubeversion}   
-control-plane-1   Ready    control-plane,master   4d19h   {mno-cluster-version1-kubeversion}   
-control-plane-2   Ready    control-plane,master   4d19h   {mno-cluster-version1-kubeversion}   
-worker-00         Ready    worker,worker-0        4d18h   {mno-cluster-version1-kubeversion}   
-worker-01         Ready    worker,worker-0        4d18h   {mno-cluster-version1-kubeversion}   
-worker-02         Ready    worker,worker-0        4d18h   {mno-cluster-version1-kubeversion}   
-worker-10         Ready    worker,worker-1        4d18h   {mno-cluster-version1-kubeversion}   
-worker-11         Ready    worker,worker-1        4d18h   {mno-cluster-version1-kubeversion}   
-worker-12         Ready    worker,worker-1        4d18h   {mno-cluster-version1-kubeversion}   
-worker-20         Ready    worker,worker-2        4d18h   {mno-cluster-version1-kubeversion}   
-worker-21         Ready    worker,worker-2        4d18h   {mno-cluster-version1-kubeversion}   
-worker-22         Ready    worker,worker-2        4d18h   {mno-cluster-version1-kubeversion}   
-----
-
 [#reference-crs-dir]
 == Setting Up the Reference CRs Directory
 
@@ -195,7 +170,7 @@ site-policies/fleet/active/
 [#custom-manifest-mcp-worker-0]
 === Custom Manifest for MCP workers
 
-Let's first create the custom manifest for our MCP worker-0, which does not exist in the reference CRs. It will be created based on the reference CRs for worker-1, worker-2, and worker-3.
+Let's first create the custom manifest for our MCP worker-0, which does not exist in the reference CRs. It will be created based on the reference CRs for worker-1 and worker-2.
 
 > IMPORTANT: You will need to create the custom manifest for your MachineConfigPools workers based on the name you've given to your workers. In this case, we've named our MCP orkers: worker-0, worker-1, and worker-2. Notice that worker-1 and worker-2 are included as references in the source-crs/reference-crs/custom-manifests/mcp-worker-1.yaml and source-crs/reference-crs/custom-manifests/mcp-worker-2.yaml files, so we can just use them as templates.
 
@@ -279,7 +254,7 @@ In this section we are going to present parts of the PolicyGenerator file that w
 This is the *preparation policy*. It readies the spoke cluster for the control plane upgrade by:
 
 * *Updating the CatalogSource*: It points the redhat-operators-disconnected catalog to the {openshift-intermediate-release} index image. This ensures OLM can find the correct operator versions compatible with {lab-mid-version}.
-* *Pausing and Configuring Worker MCPs*: It patches all worker MachineConfigPools (worker-0 through worker-3) to set paused: true. This is a critical safety measure to *prevent worker nodes from upgrading while the control plane is in motion*. It also pro-actively sets maxUnavailable: "100%" in preparation for the parallel worker upgrade phase later.
+* *Pausing and Configuring Worker MCPs*: It patches all worker MachineConfigPools (worker-0 through worker-2) to set paused: true. This is a critical safety measure to *prevent worker nodes from upgrading while the control plane is in motion*. It also pro-actively sets maxUnavailable: "100%" in preparation for the parallel worker upgrade phase later.
 
 [source,yaml,subs="attributes+,+macros"]
 ----
@@ -621,7 +596,7 @@ The following policies are created to manage the upgrade from version {lab-mid-v
 [#policy-core-upgrade-prep-major]
 === Policy: core-upgrade-prep-{version-suffix-major}
 
-This is the preparation policy. It readies the spoke cluster for the control plane upgrade. This is exactly the same policy as xref:fast-mno-policy-preparation.adoc#policy-core-upgrade-prep-mid[Policy: core-upgrade-prep-{version-suffix-mid}] adapted for the {lab-mid-version} upgrade.
+This is the preparation policy. It readies the spoke cluster for the control plane upgrade. This is exactly the same policy as xref:fast-mno-policy-preparation.adoc#policy-core-upgrade-prep-mid[Policy: core-upgrade-prep-{version-suffix-mid}] adapted for the {lab-major-version} upgrade.
 
 [source,yaml,subs="attributes+,+macros"]
 ----
@@ -941,9 +916,9 @@ EOF
 
 With the control plane policies ready to be upgraded to {lab-major-version}, the worker nodes are still paused. This final stage orchestrates the sequential, parallel upgrade of each worker MachineConfigPool (MCP).
 
-Next, we create a separate policy for each worker MCP. The sole purpose of each policy is to unpause its corresponding MCP by setting paused: false. The MCO on the spoke cluster will see this change and—because we set maxUnavailable: "100%" in the preparation policy—will begin upgrading all nodes in that MCP simultaneously.
+Next, we create a separate policy for each worker MCP. The sole purpose of each policy is to unpause its corresponding MCP by setting paused: false. The MCO on the spoke cluster will see this change and—because we set maxUnavailable: "100%" in the preparation policy—will begin upgrading all nodes in that MCP simultaneously. Setting `maxUnavailable: "100%"` is enabled by an application that can tolerate this level of node reboot, correct PodDisruptionBudgets (PDBs) to ensure HA constraints are met, and the use of topology zones which guides the scheduler to distribute replicas across zones (and thus MCPs). Refer to the xref:fast-mno-upgrades.adoc#pillar-2-workload[Cloud-native Workload Design] section for more details.
 
-Here is the policy for worker-0. This manifest is duplicated for worker-1, worker-2, and worker-3.
+Here is the policy for worker-0. This manifest is duplicated for worker-1 and worker-2.
 
 [#policygen-finish]
 === Creating the PolicyGenerator for Worker Zone Upgrade

@@ -4,7 +4,7 @@ include::_attributes.adoc[]
 
 In the previous section, the link:preparing-ztp-pipeline.html[ZTP GitOps pipeline] was put in place to deploy our Infrastructure as Code (IaC) and Configuration as Code (CaC). Here, we are going to focus on creating the Configuration as Code (CaC) for the OpenShift cluster that will be installed in the following sections. The configuration of the Telco Core Reference Design Specification is applied using multiple `PolicyGenerator` objects.
 
-The PolicyGenerator object is the cornerstone for defining Configuration as Code (CaC) within this ZTP pipeline, enabling scalable and consistent configuration of OpenShift clusters. We described how `PolicyGenerator` works in detail xref:policygen-deepdive.adoc#policies-templating[here], so let's jump directly to the creation of the different policies.
+The PolicyGenerator object is the cornerstone for defining Configuration as Code (CaC) within this ZTP pipeline, enabling scalable and consistent configuration of OpenShift clusters. We described how `PolicyGenerator` works in detail xref:policygen-deepdive.adoc#policies-patching[here], so let's jump directly to the creation of the different policies.
 
 NOTE: The configuration defined through these PolicyGenerator CRs is only a subset of what was described in xref:telco-related-infra-operators-intro.adoc[Introduction to Telco Related Infrastructure Operators]. This is for clarity and tailored to the lab environment. A full production environment for supporting telco 5G Core workloads would have additional configuration not included here, but described in detail as the {rds-link}[{openshift-release} Telco Core Reference Design Specification] in the official documentation.
 

@@ -68,7 +68,7 @@ An OpenShift https://docs.openshift.com/container-platform/{lab-major-version}/p
 
 Two specific MCP settings are critical to this methodology:
 
-* `maxUnavailable: "100%"` — Instructs the MCO to drain and reboot all nodes in the MCP simultaneously instead of one at a time. This is safe because the MCP only covers a small fraction of the total cluster capacity (e.g., ~33% with 3 zones).
+* `maxUnavailable: "100%"` — Instructs the MCO to drain and reboot all nodes in the MCP simultaneously instead of one at a time. This is safe because the MCP only covers a small fraction of the total cluster capacity (e.g., ~33% with 3 zones). Safety also requires correct PodDisruptionBudgets (PDBs) to ensure high availability constraints are met, and is helped by aligning MCPs to topology zones which guides the scheduler to distribute replicas across zones. These concepts are covered in detail in the <<pillar-2-workload>> section below.
 * `paused: true` — Prevents the worker nodes from receiving any machine config changes while the control plane upgrade is in progress. Workers are only unpaused when it is their turn to be upgraded.
 
 [source,yaml]
@@ -221,22 +221,22 @@ The `blockingCRs` field in a CGU creates an explicit dependency between stages: 
 apiVersion: ran.openshift.io/v1alpha1
 kind: ClusterGroupUpgrade
 metadata:
-  name: core-upgrade-ocp-19
-  namespace: ztp-install
+  name: fast-upgrade-19
+  namespace: ztp-policies
 spec:
-  blockingCRs:                    # <1>
-  - name: core-upgrade-prep-19
-    namespace: ztp-install
   clusters:
   - cnf77
   enable: true
   managedPolicies:
+  - core-upgrade-prep-19        # <1>
   - core-upgrade-ocp-19
+  - core-upgrade-olm-19
+  - core-upgrade-validate-19
   remediationStrategy:
     maxConcurrency: 1
-    timeout: 240
+    timeout: 480
 ----
-<1> This CGU will not start until `core-upgrade-prep-19` has completed.
+<1> A single CGU bundles all the policies for one upgrade step (prep, OCP, OLM, validate). Only 3 CGUs are needed for a full EUS-to-EUS upgrade: one for the intermediate version, one for the final version, and one for the worker MCPs.
 
 [#upgrade-stages]
 === End-to-End Upgrade Stage Sequence

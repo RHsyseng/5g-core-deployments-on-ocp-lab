@@ -58,7 +58,7 @@ In a future section we will cover the deployment and mirroring of the required b
 [#git-repo-structure]
 == Git Repository Structure
 
-When preparing a Git repository for running ZTP deployments we identified two potential ways of structuring the repository for GitOps: using branches or using folders. At this point, we can say that while branches have been used for structuring the different environments in the past, today, the preferred approach is using folders.
+When preparing a Git repository for running ZTP deployments the preferred approach is using folders to structure the repository for GitOps.
 
 In our Git repository we will have the following folder structure:
 
@@ -100,8 +100,8 @@ We know that a hub cluster can manage thousands of spoke clusters. This Git stru
 ** `fleet`: This folder contains all configuration that applies to more than one cluster for all the different environments.
 *** `active`: This folder is used to store PolicyGenerator CRs that apply to all clusters in the active environment.
 *** `testing`:  This folder is used to store PolicyGenerator CRs that apply to all clusters in the testing environment.
-** `sites`: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster.
-** `hub-1`: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster managed by a particular hub. Notice that multiple hub clusters (hub-n) folders can be created and under each folder a specific configuration of a cluster managed by the hub is stored.
+** `sites`: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster. Hub-side templating is the preferred method for handling per-site configuration, as it eliminates the need for per-site policy directories and significantly reduces the number of policies on the hub cluster.
+** `hub-1`: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster managed by a particular hub. Notice that multiple hub clusters (hub-n) folders can be created and under each folder a specific configuration of a cluster managed by the hub is stored. When using hub-side templating, per-hub policy directories under `sites/` can often be eliminated entirely since the hub can dynamically render per-cluster values from ConfigMaps.
 Note that instead of using "active" and "testing" these directories may represent multiple versions of a customer's solution, with half the fleet bound to version-A and the other half bound to version-B.
 
 A remarkable point with this new structure is that creating new environments and moving one or multiple clusters from one to another is very simple. In case of creating a new environment, we just need to copy the proper folder (active or testing) under the fleet folder to a new one, for instance, called **qe**. Then, we apply the desired changes to **qe** and select our managed cluster to be configured as a **qe** environment. This is done by adjusting the cluster or ClusterInstance CR labels, concretely, one called `logicalGroup`.

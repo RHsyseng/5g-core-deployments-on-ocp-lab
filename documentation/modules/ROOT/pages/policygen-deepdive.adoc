@@ -2,7 +2,7 @@
 include::_attributes.adoc[]
 :profile: 5g-ran-lab
 
-As we saw in an earlier section of the lab, we can leverage link:rhacm-policies.html[RHACM policies] to get our clusters configured the way we want. We also introduced the link:ztp-at-scale.html#policygen[Policy Generator component] which helps us to create a set of policies based on {cnf-features-source-crs}[pre-baked templates] (source-crs) crafted by the Red Hat CNF team.
+As we saw in an earlier section of the lab, we can leverage link:rhacm-policies.html[RHACM policies] to get our clusters configured the way we want. We also introduced the link:ztp-at-scale.html#policygen[Policy Generator component] which helps us to create a set of policies based on {core-source-crs}[pre-baked templates] (reference-crs) crafted by the Red Hat CNF team.
 
 In this section, we are going to get into the implementation details of the Policy Generator plugin.
 
@@ -58,7 +58,7 @@ Kustomize will get the GVK and after that will go to the plugins path and execut
 [#policy-generator]
 === Policy Generator
 
-The policygenerator plugin reads the PolicyGenerator manifests and uses the information provided in these files to output a set of RHACM policies that will be used for different purposes, from day2ops to monitoring the cluster health. It makes use of templated policies that can be found {cnf-features-source-crs}[here].
+The policygenerator plugin reads the PolicyGenerator manifests and uses the information provided in these files to output a set of RHACM policies that will be used for different purposes, from day2ops to monitoring the cluster health. It makes use of reference configuration CRs that can be found {core-source-crs}[here].
 
 IMPORTANT: A high level view of the installation and configuration workflow can be found in the previous section link:ztp-workflow.html[ZTP workflow].
 
@@ -119,6 +119,7 @@ The following extra-manifests are applied during installation:
 * {core-extra-manifests}/mount_namespace_config_worker.yaml[mount_namespace_config_worker.yaml] — same as above for worker nodes.
 * {core-extra-manifests}/kdump-master.yaml[kdump-master.yaml] — configures kdump crash reporting on master nodes.
 * {core-extra-manifests}/kdump-worker.yaml[kdump-worker.yaml] — configures kdump crash reporting on worker nodes.
+* {core-extra-manifests}/mc_rootless_pods_selinux.yaml[mc_rootless_pods_selinux.yaml] — enables the `container_use_devices` SELinux boolean required for rootless DPDK pods.
 
 The following optional custom-manifests define additional `MachineConfigPool` worker roles for MCP-based node grouping, which is **critical for minimizing upgrade windows**:
 
@@ -188,9 +189,9 @@ NOTE: Logging is optional in the Telco Core RDS. Including application logs requ
 {core-source-crs}/optional/logging/ClusterLogForwarder.yaml[ClusterLogForwarder Manifest]
 
 [#storage-odf]
-=== Storage — OpenShift Data Foundation
+=== Storage
 
-Telco Core applications require highly available persistent storage. OpenShift Data Foundation (ODF) is reommended to be deployed in *external mode*, where ODF connects to a dedicated external Red Hat Ceph Storage cluster. This approach allows the storage cluster to be shared across multiple OCP clusters in the same region and enables independent lifecycle management of storage and OCP infrastructure.
+Telco Core applications require highly available persistent storage. External storage is recommended for Telco Core deployments. OpenShift Data Foundation (ODF) can be used and is recommended to be deployed in *external mode*, where ODF connects to a dedicated external Red Hat Ceph Storage cluster. Other external or third-party storage solutions can also be used depending on the deployment requirements. This approach allows the storage cluster to be shared across multiple OCP clusters in the same region and enables independent lifecycle management of storage and OCP infrastructure.
 
 NOTE: Storage network traffic should be isolated from other cluster networks using VLAN isolation to reduce security risk.
 
@@ -244,10 +245,10 @@ Telco Core clusters require hardening against multiple attack vectors. Key secur
 * *Storage network isolation*: the storage network must not be reachable or routable from other cluster networks.
 * *Secure boot*: the recommended boot configuration to ensure only signed kernel modules are loaded.
 
-[#policies-templating]
-== Policies Templating
+[#policies-patching]
+== Policies Patching
 
-Policies templating is a bit different, we have a set of base configuration CRs, known as source-crs, that we can use. This set of CRs can be found {core-source-crs}[here].
+Policies patching is a bit different, we have a set of base configuration CRs, known as reference-crs, that we can use. This set of CRs can be found {core-source-crs}[here].
 
 If you access this link you will see lots of files divided into required and optional sections. 
 
