@@ -54,7 +54,7 @@
     <a class="nav-link" href="welcome.html">Welcome</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+    <a class="nav-link" href="welcome.html#5g-Core-lab">Lab Introduction</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -394,7 +394,7 @@
     <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
@@ -412,7 +412,7 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+    <a class="nav-link" href="policygen-deepdive.html#policies-patching">Policies Patching</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
@@ -786,7 +786,7 @@
     <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G Core Role Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
@@ -855,7 +855,7 @@
   <a href="welcome.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="welcome.html">LAB - 5G Core RDS Deployments on OpenShift</a></li>
     <li><a href="talm.html">Topology Aware Lifecycle Manager (TALM)</a></li>
   </ul>
 </nav>
@@ -873,7 +873,7 @@
 <p>Remember that <a href="ztp-workflow.html">ZTP</a> generates installation and configuration resources from manifests (<code>ClusterInstances</code> and <code>PolicyGenerators</code>) stored in Git. These artifacts are applied to a centralized hub cluster where a combination of OpenShift GitOps, Red Hat Advanced Cluster Management, the Assisted Service deployed by the Infrastructure Operator, and the Topology Aware Lifecycle Manager (TALM) use them to install and configure the cluster. See <a href="ztp-at-scale.html">ZTP components</a> chapter.</p>
 </div>
 <div class="paragraph">
-<p>TALM is responsible for managing the rollout of configuration throughout the lifecycle of the fleet of clusters. During initial deployment, the configuration phase of this ZTP process depends on TALM to orchestrate the application of the configuration custom resources to the cluster. When day-N configuration changes need to be rolled out to the fleet, TALM will manage that rollout in progressive limited size batches of clusters. When upgrades to OpenShift or the day-two operators are needed, TALM will progressively roll those out as well. There are several key integration points between GitOps, RHACM Policy, and TALM.</p>
+<p>TALM is responsible for managing the rollout of configuration throughout the lifecycle of the fleet of clusters. During initial deployment, the configuration phase of this ZTP process depends on TALM to orchestrate the application of the configuration custom resources to the cluster. When day-N configuration changes need to be rolled out to the fleet, TALM will manage that rollout in progressive limited size batches of clusters. When upgrades to OpenShift or the day-two operators are needed, TALM will progressively roll those out as well. TALM also controls the order in which policies are applied, ensuring that pre-requisites are met during lifecycle management updates — for example, ensuring an operator subscription is updated before its configuration CR is applied. There are several key integration points between GitOps, RHACM Policy, and TALM.</p>
 </div>
 </div>
 </div>
@@ -904,7 +904,7 @@ TALM enables us to select the timing and the clusters where the configuration is
 <h2 id="cgu"><a class="anchor" href="#cgu"></a>Cluster Group Upgrade (CGU)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Topology Aware Lifecycle Manager (TALM) builds the remediation plan from the <code>ClusterGroupUpgrade</code> (CGU) custom resource for a group of clusters. You can define the following specifications in a ClusterGroupUpgrade CR. Note that this is a CGU CR that enforces an OpenShift release upgrade which was previously set by a policy called <em>du-upgrade-platform-upgrade</em> defined in the managedPolicies spec.</p>
+<p>The Topology Aware Lifecycle Manager (TALM) builds the remediation plan from the <code>ClusterGroupUpgrade</code> (CGU) custom resource for a group of clusters. You can define the following specifications in a ClusterGroupUpgrade CR. Note that this is a CGU CR that enforces an OpenShift release upgrade which was previously defined via a set of PolicyGenerator CRs (e.g. <code>core-upgrade*.yaml</code>) provided with the Core RDS.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -938,7 +938,7 @@ spec:
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-TALM does not only deal with OpenShift release upgrades, when we talk about upgrades in this section, we mean all kind of modifications to the managed clusters. Essentially, a CGU must be created every time we want to enforce a policy.
+TALM does not only deal with OpenShift release upgrades, when we talk about upgrades in this section, we mean all kind of modifications to the managed clusters. Essentially, a CGU must be created every time we want to enforce a set of policies.
 </td>
 </tr>
 </table>
@@ -1009,17 +1009,17 @@ TALM will basically enforce all existing policies that are bound to a cluster th
 <h2 id="waves"><a class="anchor" href="#waves"></a>Waves</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A ZTP wave is basically an annotation (ran.openshift.io/ztp-deploy-wave) included on each policy template that will permit TALM to apply policies in an ordered manner. As an example, every <a href="policygen-deepdive.html#policies-templating">policy</a> generated from a PolicyGenerator by ZTP incorporates a wave number such as the <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-ran/configuration/source-crs/SriovSubscriptionNS.yaml">SriovSubscriptionNS.yaml</a>:</p>
+<p>A ZTP wave is basically an annotation (<code>ran.openshift.io/ztp-deploy-wave</code>) included on each policy that will permit TALM to apply policies in an ordered manner. When using PolicyGenerator (the recommended approach), the wave is added to the <code>policyAnnotations</code> field of each policy entry in the PolicyGenerator CR. For example, the following excerpt from a <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs">Core RDS</a> PolicyGenerator sets wave <code>"2"</code> for the subscriptions policy:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
-kind: Namespace
-metadata:
-  name: openshift-sriov-network-operator
-  annotations:
-    workload.openshift.io/allowed: management
-    ran.openshift.io/ztp-deploy-wave: "2"</code></pre>
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">policies:
+- name: common-subscriptions-policy
+  policyAnnotations:
+    ran.openshift.io/ztp-deploy-wave: "2"
+  manifests:
+    - path: reference-crs/required/networking/sriov/SriovSubscriptionNS.yaml
+    - path: reference-crs/required/networking/sriov/SriovSubscription.yaml</code></pre>
 </div>
 </div>
 <div class="admonitionblock important">
@@ -1029,7 +1029,7 @@ metadata:
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Detailed information on policy templates can be found in the following <a href="policygen-deepdive.html#policies-templating">PolicyGen deepdive</a> section.
+Detailed information on policy templates can be found in the following <a href="policygen-deepdive.html#policies-patching">PolicyGen deepdive</a> section.
 </td>
 </tr>
 </table>
@@ -1039,18 +1039,6 @@ Detailed information on policy templates can be found in the following <a href="
 </div>
 <div class="paragraph">
 <p>As TALM works through the list of managedPolicies included in the CGU it will wait for each policy to be compliant before moving to the next policy. It is important to ensure that the order in which policies are listed under managedPolicies (and thus also the wave annotation used in populating this list during ZTP) takes into account any pre-requisites for the CRs in those policies to be applied to the cluster. For example an operator must be installed before, or concurrently with, the configuration for the operator.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-All CRs in the same policy must have the same setting for the ztp-deploy-wave annotation. The default value of this annotation for each CR can be overridden in the PolicyGenerator. Default ztp-deploy-wave value can be found on the proper <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-ran/configuration/source-crs">source crs</a>.
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>

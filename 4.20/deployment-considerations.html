@@ -54,7 +54,7 @@
     <a class="nav-link" href="welcome.html">Welcome</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+    <a class="nav-link" href="welcome.html#5g-Core-lab">Lab Introduction</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -394,7 +394,7 @@
     <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
@@ -412,7 +412,7 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+    <a class="nav-link" href="policygen-deepdive.html#policies-patching">Policies Patching</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
@@ -786,7 +786,7 @@
     <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G Core Role Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
@@ -855,7 +855,7 @@
   <a href="welcome.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="welcome.html">LAB - 5G Core RDS Deployments on OpenShift</a></li>
     <li><a href="deployment-considerations.html">Deployment Considerations</a></li>
   </ul>
 </nav>
@@ -976,7 +976,7 @@ Depending on your hardware vendor the naming of the following features may vary.
 <h2 id="git-repo-structure"><a class="anchor" href="#git-repo-structure"></a>Git Repository Structure</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When preparing a Git repository for running ZTP deployments we identified two potential ways of structuring the repository for GitOps: using branches or using folders. At this point, we can say that while branches have been used for structuring the different environments in the past, today, the preferred approach is using folders.</p>
+<p>When preparing a Git repository for running ZTP deployments the preferred approach is using folders to structure the repository for GitOps.</p>
 </div>
 <div class="paragraph">
 <p>In our Git repository we will have the following folder structure:</p>
@@ -1043,10 +1043,10 @@ Depending on your hardware vendor the naming of the following features may vary.
 </div>
 </li>
 <li>
-<p><code>sites</code>: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster.</p>
+<p><code>sites</code>: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster. Hub-side templating is the preferred method for handling per-site configuration, as it eliminates the need for per-site policy directories and significantly reduces the number of policies on the hub cluster.</p>
 </li>
 <li>
-<p><code>hub-1</code>: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster managed by a particular hub. Notice that multiple hub clusters (hub-n) folders can be created and under each folder a specific configuration of a cluster managed by the hub is stored.
+<p><code>hub-1</code>: This folder is used to store PolicyGenerator CRs that specifically apply only to a cluster managed by a particular hub. Notice that multiple hub clusters (hub-n) folders can be created and under each folder a specific configuration of a cluster managed by the hub is stored. When using hub-side templating, per-hub policy directories under <code>sites/</code> can often be eliminated entirely since the hub can dynamically render per-cluster values from ConfigMaps.
 Note that instead of using "active" and "testing" these directories may represent multiple versions of a customer&#8217;s solution, with half the fleet bound to version-A and the other half bound to version-B.</p>
 </li>
 </ul>

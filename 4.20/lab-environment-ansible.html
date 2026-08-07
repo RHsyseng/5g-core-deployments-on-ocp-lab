@@ -53,7 +53,7 @@
     <a class="nav-link" href="welcome.html">Welcome</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+    <a class="nav-link" href="welcome.html#5g-Core-lab">Lab Introduction</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -393,7 +393,7 @@
     <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
@@ -411,7 +411,7 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+    <a class="nav-link" href="policygen-deepdive.html#policies-patching">Policies Patching</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
@@ -785,7 +785,7 @@
     <a class="nav-link" href="#lab-requirements">Lab Requirements</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#role-overview">OCP4 5G RAN Role Overview</a>
+    <a class="nav-link" href="#role-overview">OCP4 5G Core Role Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="#inventory">Inventory File</a>
@@ -854,7 +854,7 @@
   <a href="welcome.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="welcome.html">LAB - 5G Core RDS Deployments on OpenShift</a></li>
     <li><a href="lab-environment-ansible.html">Lab Environment</a></li>
   </ul>
 </nav>
@@ -875,7 +875,7 @@
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-If you are a Red Hatter, you can order a lab environment on the <a href="https://demo.redhat.com">Red Hat Demo Platform</a>. You just need to order the lab named <code>5G RAN RDS Deployments on OpenShift</code>.
+If you are a Red Hatter, you can order a lab environment on the <a href="https://demo.redhat.com">Red Hat Demo Platform</a>. You just need to order the lab named <code>5G Core Deployment on OpenShift</code>.
 </td>
 </tr>
 </table>
@@ -941,10 +941,10 @@ These instructions have been tested in a RHEL 9.6, we cannot guarantee that othe
 </div>
 </div>
 <div class="sect1">
-<h2 id="role-overview"><a class="anchor" href="#role-overview"></a>OCP4 5G RAN Role Overview</h2>
+<h2 id="role-overview"><a class="anchor" href="#role-overview"></a>OCP4 5G Core Role Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This role <a href="https://github.com/RHsyseng/agnosticd/tree/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab">ocp4_workload_5gran_deployments_lab</a> installs the 5G RAN RDS Deployments Lab environment. It consists of the following tasks files:</p>
+<p>This role <a href="https://github.com/RHsyseng/agnosticd/tree/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab">ocp4_workload_5gran_deployments_lab</a> installs the 5G Core RDS Deployments Lab environment. It consists of the following tasks files:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -955,7 +955,7 @@ These instructions have been tested in a RHEL 9.6, we cannot guarantee that othe
 <p>The <a href="https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/workload.yml">workload.yml</a> file contains the main deployment tasks that create and configures the lab.</p>
 </li>
 <li>
-<p>The <a href="https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/defaults/main.yml">defaults/main.yml</a> file contains the default configuration variables for the 5G RAN lab deployment.</p>
+<p>The <a href="https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/defaults/main.yml">defaults/main.yml</a> file contains the default configuration variables for the 5G Core lab deployment.</p>
 </li>
 <li>
 <p>The <code>run-role.yaml</code> file is the playbook that runs the role along with the variables customized for you environment.</p>
@@ -1070,7 +1070,7 @@ $ cd agnosticd/ansible/roles_ocp_workload</code></pre>
 <h2 id="preworkload-tasks-overview"><a class="anchor" href="#preworkload-tasks-overview"></a>Pre-Workload Tasks Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/pre_workload.yml"> pre_workload.yml</a> file contains the initial setup and preparation tasks that must be completed before deploying the 5G RAN RDS lab environment. This file ensures your hypervisor is properly configured with all necessary dependencies, services, and infrastructure components.</p>
+<p>The <a href="https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/pre_workload.yml"> pre_workload.yml</a> file contains the initial setup and preparation tasks that must be completed before deploying the 5G Core RDS lab environment. This file ensures your hypervisor is properly configured with all necessary dependencies, services, and infrastructure components.</p>
 </div>
 <div class="sect2">
 <h3 id="what-preworkload-does"><a class="anchor" href="#what-preworkload-does"></a>What Pre-Workload Does</h3>
@@ -1393,7 +1393,7 @@ This is a estimation based on our experience and our environment.
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-The pre-workload phase is essential for creating a properly configured environment that can successfully deploy and run the 5G RAN lab workloads.
+The pre-workload phase is essential for creating a properly configured environment that can successfully deploy and run the 5G Core lab workloads.
 </td>
 </tr>
 </table>
@@ -1405,12 +1405,12 @@ The pre-workload phase is essential for creating a properly configured environme
 <h2 id="workload-tasks-overview"><a class="anchor" href="#workload-tasks-overview"></a>Workload Tasks Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>workload.yml</code> file contains the main deployment tasks that create and configure the 5G RAN lab environment. This file deploys OpenShift clusters, installs operators, and configures the infrastructure needed for 5G workloads.</p>
+<p>The <code>workload.yml</code> file contains the main deployment tasks that create and configure the 5G Core lab environment. This file deploys OpenShift clusters, installs operators, and configures the infrastructure needed for 5G workloads.</p>
 </div>
 <div class="sect2">
 <h3 id="what-workload-does"><a class="anchor" href="#what-workload-does"></a>What Workload Does</h3>
 <div class="paragraph">
-<p>The workload phase deploys the complete 5G RAN lab environment by:</p>
+<p>The workload phase deploys the complete 5G Core lab environment by:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1715,7 +1715,7 @@ oc get node openshift-master-0 -o json --kubeconfig /home/lab-user/seed-cluster-
 <h2 id="next-steps"><a class="anchor" href="#next-steps"></a>Next Steps</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The workload phase creates a complete 5G RAN RDS lab environment ready for advanced telco workload deployment and testing. Once workload completes successfully, the system provides:</p>
+<p>The workload phase creates a complete 5G Core RDS lab environment ready for advanced telco workload deployment and testing. Once workload completes successfully, the system provides:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -1732,7 +1732,7 @@ oc get node openshift-master-0 -o json --kubeconfig /home/lab-user/seed-cluster-
 <p><strong>Performance optimizations</strong> for telco applications.</p>
 </li>
 <li>
-<p><strong>Ready environment</strong> for 5G RAN lab exercises.</p>
+<p><strong>Ready environment</strong> for 5G Core lab exercises.</p>
 </li>
 </ol>
 </div>

@@ -54,7 +54,7 @@
     <a class="nav-link" href="welcome.html">Welcome</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+    <a class="nav-link" href="welcome.html#5g-Core-lab">Lab Introduction</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -394,7 +394,7 @@
     <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
@@ -412,7 +412,7 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+    <a class="nav-link" href="policygen-deepdive.html#policies-patching">Policies Patching</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
@@ -786,7 +786,7 @@
     <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G Core Role Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
@@ -855,7 +855,7 @@
   <a href="welcome.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="welcome.html">LAB - 5G Core RDS Deployments on OpenShift</a></li>
     <li><a href="fast-mno-upgrades.html">Fast MNO Upgrades</a></li>
   </ul>
 </nav>
@@ -963,7 +963,7 @@ Phase 2: Worker Zone Upgrade  (one zone at a time)
 <div class="ulist">
 <ul>
 <li>
-<p><code>maxUnavailable: "100%"</code> — Instructs the MCO to drain and reboot all nodes in the MCP simultaneously instead of one at a time. This is safe because the MCP only covers a small fraction of the total cluster capacity (e.g., ~33% with 3 zones).</p>
+<p><code>maxUnavailable: "100%"</code> — Instructs the MCO to drain and reboot all nodes in the MCP simultaneously instead of one at a time. This is safe because the MCP only covers a small fraction of the total cluster capacity (e.g., ~33% with 3 zones). Safety also requires correct PodDisruptionBudgets (PDBs) to ensure high availability constraints are met, and is helped by aligning MCPs to topology zones which guides the scheduler to distribute replicas across zones. These concepts are covered in detail in the <a href="#pillar-2-workload">Pillar 2: Cloud-native Workload Design</a> section below.</p>
 </li>
 <li>
 <p><code>paused: true</code> — Prevents the worker nodes from receiving any machine config changes while the control plane upgrade is in progress. Workers are only unpaused when it is their turn to be upgraded.</p>
@@ -1262,27 +1262,27 @@ If you have an application with <code>maxUnavailable: 1</code>, you must ensure 
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: ran.openshift.io/v1alpha1
 kind: ClusterGroupUpgrade
 metadata:
-  name: core-upgrade-ocp-19
-  namespace: ztp-install
+  name: fast-upgrade-19
+  namespace: ztp-policies
 spec:
-  blockingCRs:                    <i class="conum" data-value="1"></i><b>(1)</b>
-  - name: core-upgrade-prep-19
-    namespace: ztp-install
   clusters:
   - cnf77
   enable: true
   managedPolicies:
+  - core-upgrade-prep-19        <i class="conum" data-value="1"></i><b>(1)</b>
   - core-upgrade-ocp-19
+  - core-upgrade-olm-19
+  - core-upgrade-validate-19
   remediationStrategy:
     maxConcurrency: 1
-    timeout: 240</code></pre>
+    timeout: 480</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This CGU will not start until <code>core-upgrade-prep-19</code> has completed.</td>
+<td>A single CGU bundles all the policies for one upgrade step (prep, OCP, OLM, validate). Only 3 CGUs are needed for a full EUS-to-EUS upgrade: one for the intermediate version, one for the final version, and one for the worker MCPs.</td>
 </tr>
 </table>
 </div>

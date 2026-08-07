@@ -54,7 +54,7 @@
     <a class="nav-link" href="welcome.html">Welcome</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+    <a class="nav-link" href="welcome.html#5g-Core-lab">Lab Introduction</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -394,7 +394,7 @@
     <a class="nav-link" href="policygen-deepdive.html#power-management">Power Management</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage — OpenShift Data Foundation</a>
+    <a class="nav-link" href="policygen-deepdive.html#storage-odf">Storage</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#monitoring-core">Monitoring</a>
@@ -412,7 +412,7 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="policygen-deepdive.html#policies-templating">Policies Templating</a>
+    <a class="nav-link" href="policygen-deepdive.html#policies-patching">Policies Patching</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="policygen-deepdive.html#custom-policy-templates">Policies Custom Templating</a>
@@ -786,7 +786,7 @@
     <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G Core Role Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
@@ -855,7 +855,7 @@
   <a href="welcome.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="welcome.html">LAB - 5G Core RDS Deployments on OpenShift</a></li>
     <li><a href="fast-mno-policy-preparation.html">Fast MNO Upgrade — Policy Preparation</a></li>
   </ul>
 </nav>
@@ -1000,31 +1000,6 @@ worker-21         Ready    worker,worker-2        42m   v1.31.14   kfd2
 worker-22         Ready    worker,worker-2        41m   v1.31.14   kfd2</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Finally, confirm that all 9 worker nodes are labeled with their corresponding Kubernetes failure domain:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc --kubeconfig ~/mno-kubeconfig get nodes</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME              STATUS   ROLES                  AGE     VERSION
-control-plane-0   Ready    control-plane,master   4d18h   v1.31.14
-control-plane-1   Ready    control-plane,master   4d19h   v1.31.14
-control-plane-2   Ready    control-plane,master   4d19h   v1.31.14
-worker-00         Ready    worker,worker-0        4d18h   v1.31.14
-worker-01         Ready    worker,worker-0        4d18h   v1.31.14
-worker-02         Ready    worker,worker-0        4d18h   v1.31.14
-worker-10         Ready    worker,worker-1        4d18h   v1.31.14
-worker-11         Ready    worker,worker-1        4d18h   v1.31.14
-worker-12         Ready    worker,worker-1        4d18h   v1.31.14
-worker-20         Ready    worker,worker-2        4d18h   v1.31.14
-worker-21         Ready    worker,worker-2        4d18h   v1.31.14
-worker-22         Ready    worker,worker-2        4d18h   v1.31.14</code></pre>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1094,7 +1069,7 @@ podman rm $TEMP_ID</code></pre>
 <div class="sect2">
 <h3 id="custom-manifest-mcp-worker-0"><a class="anchor" href="#custom-manifest-mcp-worker-0"></a>Custom Manifest for MCP workers</h3>
 <div class="paragraph">
-<p>Let&#8217;s first create the custom manifest for our MCP worker-0, which does not exist in the reference CRs. It will be created based on the reference CRs for worker-1, worker-2, and worker-3.</p>
+<p>Let&#8217;s first create the custom manifest for our MCP worker-0, which does not exist in the reference CRs. It will be created based on the reference CRs for worker-1 and worker-2.</p>
 </div>
 <div class="quoteblock">
 <blockquote>
@@ -1213,7 +1188,7 @@ EOF</code></pre>
 <p><strong>Updating the CatalogSource</strong>: It points the redhat-operators-disconnected catalog to the v4.19 index image. This ensures OLM can find the correct operator versions compatible with 4.19.</p>
 </li>
 <li>
-<p><strong>Pausing and Configuring Worker MCPs</strong>: It patches all worker MachineConfigPools (worker-0 through worker-3) to set paused: true. This is a critical safety measure to <strong>prevent worker nodes from upgrading while the control plane is in motion</strong>. It also pro-actively sets maxUnavailable: "100%" in preparation for the parallel worker upgrade phase later.</p>
+<p><strong>Pausing and Configuring Worker MCPs</strong>: It patches all worker MachineConfigPools (worker-0 through worker-2) to set paused: true. This is a critical safety measure to <strong>prevent worker nodes from upgrading while the control plane is in motion</strong>. It also pro-actively sets maxUnavailable: "100%" in preparation for the parallel worker upgrade phase later.</p>
 </li>
 </ul>
 </div>
@@ -1593,7 +1568,7 @@ Notice that the path to the source CRs in all the policies points now v4.20, not
 <div class="sect2">
 <h3 id="policy-core-upgrade-prep-major"><a class="anchor" href="#policy-core-upgrade-prep-major"></a>Policy: core-upgrade-prep-20</h3>
 <div class="paragraph">
-<p>This is the preparation policy. It readies the spoke cluster for the control plane upgrade. This is exactly the same policy as <a href="#policy-core-upgrade-prep-mid">Policy: core-upgrade-prep-19</a> adapted for the 4.19 upgrade.</p>
+<p>This is the preparation policy. It readies the spoke cluster for the control plane upgrade. This is exactly the same policy as <a href="#policy-core-upgrade-prep-mid">Policy: core-upgrade-prep-19</a> adapted for the 4.20 upgrade.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1919,10 +1894,10 @@ EOF</code></pre>
 <p>With the control plane policies ready to be upgraded to 4.20, the worker nodes are still paused. This final stage orchestrates the sequential, parallel upgrade of each worker MachineConfigPool (MCP).</p>
 </div>
 <div class="paragraph">
-<p>Next, we create a separate policy for each worker MCP. The sole purpose of each policy is to unpause its corresponding MCP by setting paused: false. The MCO on the spoke cluster will see this change and—because we set maxUnavailable: "100%" in the preparation policy—will begin upgrading all nodes in that MCP simultaneously.</p>
+<p>Next, we create a separate policy for each worker MCP. The sole purpose of each policy is to unpause its corresponding MCP by setting paused: false. The MCO on the spoke cluster will see this change and—because we set maxUnavailable: "100%" in the preparation policy—will begin upgrading all nodes in that MCP simultaneously. Setting <code>maxUnavailable: "100%"</code> is enabled by an application that can tolerate this level of node reboot, correct PodDisruptionBudgets (PDBs) to ensure HA constraints are met, and the use of topology zones which guides the scheduler to distribute replicas across zones (and thus MCPs). Refer to the <a href="fast-mno-upgrades.html#pillar-2-workload" class="xref page">Cloud-native Workload Design</a> section for more details.</p>
 </div>
 <div class="paragraph">
-<p>Here is the policy for worker-0. This manifest is duplicated for worker-1, worker-2, and worker-3.</p>
+<p>Here is the policy for worker-0. This manifest is duplicated for worker-1 and worker-2.</p>
 </div>
 <div class="sect2">
 <h3 id="policygen-finish"><a class="anchor" href="#policygen-finish"></a>Creating the PolicyGenerator for Worker Zone Upgrade</h3>

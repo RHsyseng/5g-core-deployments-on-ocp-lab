@@ -54,7 +54,7 @@
     <a class="nav-link" href="welcome.html">Welcome</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="welcome.html#5g-ran-lab">Lab Introduction</a>
+    <a class="nav-link" href="welcome.html#5g-Core-lab">Lab Introduction</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -394,7 +394,7 @@
     <a class="nav-link" href="#power-management">Power Management</a>
   </li>
   <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="#storage-odf">Storage — OpenShift Data Foundation</a>
+    <a class="nav-link" href="#storage-odf">Storage</a>
   </li>
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="#monitoring-core">Monitoring</a>
@@ -412,7 +412,7 @@
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="#policies-templating">Policies Templating</a>
+    <a class="nav-link" href="#policies-patching">Policies Patching</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="3">
     <a class="nav-link" href="#custom-policy-templates">Policies Custom Templating</a>
@@ -786,7 +786,7 @@
     <a class="nav-link" href="lab-environment-ansible.html#lab-requirements">Lab Requirements</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G RAN Role Overview</a>
+    <a class="nav-link" href="lab-environment-ansible.html#role-overview">OCP4 5G Core Role Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="lab-environment-ansible.html#inventory">Inventory File</a>
@@ -855,7 +855,7 @@
   <a href="welcome.html" class="home-link"></a>
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
-    <li><a href="welcome.html">LAB - 5G RAN RDS Deployments on OpenShift</a></li>
+    <li><a href="welcome.html">LAB - 5G Core RDS Deployments on OpenShift</a></li>
     <li><a href="policygen-deepdive.html">PolicyGen Deepdive</a></li>
   </ul>
 </nav>
@@ -867,7 +867,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>As we saw in an earlier section of the lab, we can leverage <a href="rhacm-policies.html">RHACM policies</a> to get our clusters configured the way we want. We also introduced the <a href="ztp-at-scale.html#policygen">Policy Generator component</a> which helps us to create a set of policies based on <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-ran/configuration/source-crs">pre-baked templates</a> (source-crs) crafted by the Red Hat CNF team.</p>
+<p>As we saw in an earlier section of the lab, we can leverage <a href="rhacm-policies.html">RHACM policies</a> to get our clusters configured the way we want. We also introduced the <a href="ztp-at-scale.html#policygen">Policy Generator component</a> which helps us to create a set of policies based on <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs">pre-baked templates</a> (reference-crs) crafted by the Red Hat CNF team.</p>
 </div>
 <div class="paragraph">
 <p>In this section, we are going to get into the implementation details of the Policy Generator plugin.</p>
@@ -956,7 +956,7 @@ kind: PolicyGenerator</code></pre>
 <div class="sect2">
 <h3 id="policy-generator"><a class="anchor" href="#policy-generator"></a>Policy Generator</h3>
 <div class="paragraph">
-<p>The policygenerator plugin reads the PolicyGenerator manifests and uses the information provided in these files to output a set of RHACM policies that will be used for different purposes, from day2ops to monitoring the cluster health. It makes use of templated policies that can be found <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-ran/configuration/source-crs">here</a>.</p>
+<p>The policygenerator plugin reads the PolicyGenerator manifests and uses the information provided in these files to output a set of RHACM policies that will be used for different purposes, from day2ops to monitoring the cluster health. It makes use of reference configuration CRs that can be found <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs">here</a>.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -1100,6 +1100,9 @@ Workloads running on control plane nodes must be tested and verified to ensure t
 <li>
 <p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/kdump-worker.yaml">kdump-worker.yaml</a> — configures kdump crash reporting on worker nodes.</p>
 </li>
+<li>
+<p><a href="https://github.com/openshift-kni/telco-reference/blob/release-4.20/telco-core/install/extra-manifests/mc_rootless_pods_selinux.yaml">mc_rootless_pods_selinux.yaml</a> — enables the <code>container_use_devices</code> SELinux boolean required for rootless DPDK pods.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -1213,9 +1216,9 @@ Logging is optional in the Telco Core RDS. Including application logs requires e
 </div>
 </div>
 <div class="sect2">
-<h3 id="storage-odf"><a class="anchor" href="#storage-odf"></a>Storage — OpenShift Data Foundation</h3>
+<h3 id="storage-odf"><a class="anchor" href="#storage-odf"></a>Storage</h3>
 <div class="paragraph">
-<p>Telco Core applications require highly available persistent storage. OpenShift Data Foundation (ODF) is reommended to be deployed in <strong>external mode</strong>, where ODF connects to a dedicated external Red Hat Ceph Storage cluster. This approach allows the storage cluster to be shared across multiple OCP clusters in the same region and enables independent lifecycle management of storage and OCP infrastructure.</p>
+<p>Telco Core applications require highly available persistent storage. External storage is recommended for Telco Core deployments. OpenShift Data Foundation (ODF) can be used and is recommended to be deployed in <strong>external mode</strong>, where ODF connects to a dedicated external Red Hat Ceph Storage cluster. Other external or third-party storage solutions can also be used depending on the deployment requirements. This approach allows the storage cluster to be shared across multiple OCP clusters in the same region and enables independent lifecycle management of storage and OCP infrastructure.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1321,10 +1324,10 @@ The monitoring configuration is optional in the Telco Core RDS. The CMO is inclu
 </div>
 </div>
 <div class="sect1">
-<h2 id="policies-templating"><a class="anchor" href="#policies-templating"></a>Policies Templating</h2>
+<h2 id="policies-patching"><a class="anchor" href="#policies-patching"></a>Policies Patching</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Policies templating is a bit different, we have a set of base configuration CRs, known as source-crs, that we can use. This set of CRs can be found <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs">here</a>.</p>
+<p>Policies patching is a bit different, we have a set of base configuration CRs, known as reference-crs, that we can use. This set of CRs can be found <a href="https://github.com/openshift-kni/telco-reference/tree/release-4.20/telco-core/configuration/reference-crs">here</a>.</p>
 </div>
 <div class="paragraph">
 <p>If you access this link you will see lots of files divided into required and optional sections.</p>
