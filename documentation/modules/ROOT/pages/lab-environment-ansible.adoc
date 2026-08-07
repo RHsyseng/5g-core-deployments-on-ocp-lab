@@ -4,7 +4,7 @@ include::_attributes.adoc[]
 
 This section describes how to deploy your own lab environment.
 
-CAUTION: If you are a Red Hatter, you can order a lab environment on the https://demo.redhat.com[Red Hat Demo Platform]. You just need to order the lab named `5G RAN RDS Deployments on OpenShift`.
+CAUTION: If you are a Red Hatter, you can order a lab environment on the https://demo.redhat.com[Red Hat Demo Platform]. You just need to order the lab named `5G Core Deployment on OpenShift`.
 
 IMPORTANT: For lab versions 4.19 and later, deploying the lab in your local environment can be done using the https://github.com/RHsyseng/agnosticd/tree/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab[ocp4_workload_5gran_deployments_lab] Ansible role that is actually the same used for on-demand requests on the https://demo.redhat.com[Red Hat Demo Platform]. If you prefer a step-by-step deployment, refer to https://labs.sysdeseng.com/5g-ran-deployments-on-ocp-lab/4.18/lab-environment.html[previous lab versions] for guidance.
 
@@ -23,13 +23,13 @@ Size the filesystems containing these directories accordingly as the default par
 IMPORTANT: These instructions have been tested in a RHEL 9.6, we cannot guarantee that other operating systems (even RHEL-based) will work. We won't be providing support out of RHEL 9.
 
 [#role-overview]
-== OCP4 5G RAN Role Overview
+== OCP4 5G Core Role Overview
 
-This role https://github.com/RHsyseng/agnosticd/tree/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab[ocp4_workload_5gran_deployments_lab] installs the 5G RAN RDS Deployments Lab environment. It consists of the following tasks files:
+This role https://github.com/RHsyseng/agnosticd/tree/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab[ocp4_workload_5gran_deployments_lab] installs the 5G Core RDS Deployments Lab environment. It consists of the following tasks files:
 
 * The https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/pre_workload.yml[pre_workload.yml] file contains the initial setup and preparation.
 * The https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/workload.yml[workload.yml] file contains the main deployment tasks that create and configures the lab.
-* The https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/defaults/main.yml[defaults/main.yml] file contains the default configuration variables for the 5G RAN lab deployment.
+* The https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/defaults/main.yml[defaults/main.yml] file contains the default configuration variables for the 5G Core lab deployment.
 * The `run-role.yaml` file is the playbook that runs the role along with the variables customized for you environment.
 * The `inventory` file contains the hypervisor where the lab is going to be deployed.
 
@@ -108,7 +108,7 @@ Notice that the Ansible playbook uses the mentioned role to deploy the lab. The 
 [#preworkload-tasks-overview]
 == Pre-Workload Tasks Overview
 
-The https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/pre_workload.yml[ pre_workload.yml] file contains the initial setup and preparation tasks that must be completed before deploying the 5G RAN RDS lab environment. This file ensures your hypervisor is properly configured with all necessary dependencies, services, and infrastructure components. 
+The https://github.com/RHsyseng/agnosticd/blob/development/ansible/roles_ocp_workloads/ocp4_workload_5gran_deployments_lab/tasks/pre_workload.yml[ pre_workload.yml] file contains the initial setup and preparation tasks that must be completed before deploying the 5G Core RDS lab environment. This file ensures your hypervisor is properly configured with all necessary dependencies, services, and infrastructure components. 
 
 [#what-preworkload-does]
 === What Pre-Workload Does
@@ -233,17 +233,17 @@ CAUTION: This is a estimation based on our experience and our environment.
 * *Typical duration*: 30-45 minutes.
 * *Slow internet*: 45-60 minutes.
 
-IMPORTANT: The pre-workload phase is essential for creating a properly configured environment that can successfully deploy and run the 5G RAN lab workloads.
+IMPORTANT: The pre-workload phase is essential for creating a properly configured environment that can successfully deploy and run the 5G Core lab workloads.
 
 [#workload-tasks-overview]
 == Workload Tasks Overview
 
-The `workload.yml` file contains the main deployment tasks that create and configure the 5G RAN lab environment. This file deploys OpenShift clusters, installs operators, and configures the infrastructure needed for 5G workloads.
+The `workload.yml` file contains the main deployment tasks that create and configure the 5G Core lab environment. This file deploys OpenShift clusters, installs operators, and configures the infrastructure needed for 5G workloads.
 
 [#what-workload-does]
 === What Workload Does
 
-The workload phase deploys the complete 5G RAN lab environment by:
+The workload phase deploys the complete 5G Core lab environment by:
 
 1. Hub Cluster Deployment
 * *Deploys hub cluster*: Creates a compact OpenShift cluster.
@@ -368,13 +368,13 @@ oc get node openshift-master-0 -o json --kubeconfig /home/lab-user/seed-cluster-
 [#next-steps]
 == Next Steps
 
-The workload phase creates a complete 5G RAN RDS lab environment ready for advanced telco workload deployment and testing. Once workload completes successfully, the system provides:
+The workload phase creates a complete 5G Core RDS lab environment ready for advanced telco workload deployment and testing. Once workload completes successfully, the system provides:
 
 1. **Fully functional hub cluster** with multi-cluster management.
 2. **SNO cluster** with telco-specific operators.
 3. **Network infrastructure** for 5G workloads.
 4. **Performance optimizations** for telco applications.
-5. **Ready environment** for 5G RAN lab exercises.
+5. **Ready environment** for 5G Core lab exercises.
 
 After successful workload deployment:
 
